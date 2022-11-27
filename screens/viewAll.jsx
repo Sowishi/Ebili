@@ -77,7 +77,7 @@ export default function ViewALl({ route, navigation }) {
         justifyContent: "center",
       }}
     >
-      <Header navigation={navigation} />
+      {/* <Header navigation={navigation} /> */}
       <FlatList
         data={data.itemDATA}
         numColumns={2}

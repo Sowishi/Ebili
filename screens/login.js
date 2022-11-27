@@ -15,7 +15,7 @@ export default function Login({ navigation }) {
   useEffect(() => {
     onAuthStateChanged(auth, () => {
       if (auth.currentUser) {
-        navigation.navigate("Home");
+        navigation.replace("Drawer");
       }
     });
   });
@@ -43,7 +43,7 @@ export default function Login({ navigation }) {
     } else {
       signInWithEmailAndPassword(auth, email, pass)
         .then(() => {
-          navigation.replace("Home");
+          navigation.replace("Drawer");
         })
         .catch((error) => {
           showErrorToast(error.code);

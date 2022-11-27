@@ -43,6 +43,8 @@ export default function ViewItem({ route }) {
     });
   };
 
+  console.log(data);
+
   return (
     <SafeAreaView style={{ flex: 1 }}>
       <Modal

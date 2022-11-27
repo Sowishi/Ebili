@@ -4,9 +4,7 @@ import { Entypo } from "@expo/vector-icons";
 import { Ionicons } from "@expo/vector-icons";
 import AuthTextInput from "./AuthTextInput";
 
-export default function Header({ navigation, currentUser }) {
-  console.log(currentUser, "header");
-
+export default function Header({ navigation }) {
   return (
     <View
       style={{
@@ -25,7 +23,12 @@ export default function Header({ navigation, currentUser }) {
         <View
           style={{ backgroundColor: "white", borderRadius: 100, padding: 5 }}
         >
-          <Entypo name="menu" size={25} color="#4FBCDD" />
+          <Entypo
+            name="menu"
+            size={25}
+            color="#4FBCDD"
+            onPress={() => navigation.openDrawer()}
+          />
         </View>
         <Text style={{ fontSize: 25, fontWeight: "bold" }}>E-BILI</Text>
         <View
@@ -47,16 +50,17 @@ export default function Header({ navigation, currentUser }) {
               <Entypo name="shopping-cart" size={25} color="#4FBCDD" />
             </View>
           </TouchableOpacity>
-
-          <View
-            style={{
-              backgroundColor: "#F7A721",
-              borderRadius: 100,
-              padding: 5,
-            }}
-          >
-            <Entypo name="user" size={25} color="black" />
-          </View>
+          <TouchableOpacity onPress={() => navigation.navigate("User")}>
+            <View
+              style={{
+                backgroundColor: "#F7A721",
+                borderRadius: 100,
+                padding: 5,
+              }}
+            >
+              <Entypo name="user" size={25} color="black" />
+            </View>
+          </TouchableOpacity>
         </View>
       </View>
       <View
