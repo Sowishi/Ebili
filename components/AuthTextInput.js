@@ -7,6 +7,8 @@ export default function AuthTextInput({
   entypoIconName,
   secured,
   style,
+  type,
+  onChange,
 }) {
   return (
     <View
@@ -30,6 +32,8 @@ export default function AuthTextInput({
         style={{ marginLeft: 5 }}
       />
       <TextInput
+        onChangeText={onChange}
+        textContentType={type}
         secureTextEntry={secured}
         placeholder={placeHolder}
         style={{

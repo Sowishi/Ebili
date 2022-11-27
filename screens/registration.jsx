@@ -5,11 +5,75 @@ import {
   ImageBackground,
   Dimensions,
 } from "react-native";
-import React from "react";
+import React, { useEffect, useState } from "react";
 import AuthTextInput from "../components/AuthTextInput";
 import AuthButton from "../components/AuthButton";
 
+import { auth } from "../firebaseConfig";
+import { createUserWithEmailAndPassword } from "@firebase/auth";
+import Toast from "react-native-toast-message";
+
 export default function Registration({ navigation }) {
+  const [firstName, setFirstName] = useState();
+  const [lastName, setLastName] = useState();
+  const [email, setEmail] = useState();
+  const [pass, setPass] = useState();
+  const [pass2, setPass2] = useState();
+
+  const handleError = () => {
+    const reg = /^\w+([\.-]?\w+)*@\w+([\.-]?\w+)*(\.\w{2,3})+$/;
+    if (firstName === "" || firstName === undefined) {
+      return "Please input your first name.";
+    } else if (lastName === "" || lastName === undefined) {
+      return "Please input your last name.";
+    } else if (email === "" || email === undefined) {
+      return "Please input your email.";
+    } else if (!reg.test(email)) {
+      return "Please input a proper email address";
+    } else if (pass === "" || pass === undefined) {
+      return "Password is empty";
+    } else if (pass !== pass2) {
+      return "Password did'nt Match";
+    } else if (pass.length < 8) {
+      return "Password must be longer than 8 characters";
+    } else {
+      return false;
+    }
+  };
+
+  const handleSignUp = () => {
+    const result = handleError();
+
+    if (result !== false) {
+      showErrorToast(result);
+    } else {
+      createUserWithEmailAndPassword(auth, email, pass)
+        .then((userCredentials) => {
+          // let user = userCredentials.user;
+          // user.displayName = firstName;
+          showSuccessToast();
+          navigation.navigate("Login");
+        })
+        .catch((error) => {
+          showErrorToast(error.code);
+        });
+    }
+  };
+
+  const showSuccessToast = () => {
+    Toast.show({
+      type: "success",
+      text1: "Registered Successfully",
+    });
+  };
+
+  const showErrorToast = (text) => {
+    Toast.show({
+      type: "error",
+      text1: text,
+    });
+  };
+
   return (
     <View style={{ flex: 1 }}>
       <ImageBackground
@@ -41,6 +105,7 @@ export default function Registration({ navigation }) {
               }}
               placeHolder="First name"
               secured={false}
+              onChange={(text) => setFirstName(text)}
             />
             <AuthTextInput
               style={{
@@ -49,21 +114,26 @@ export default function Registration({ navigation }) {
               }}
               placeHolder="Last name"
               secured={false}
+              onChange={(text) => setLastName(text)}
             />
           </View>
           <AuthTextInput
+            onChange={(text) => setEmail(text)}
             style={{ marginTop: 15 }}
-            placeHolder="Username"
-            entypoIconName="user"
+            placeHolder="Email"
+            entypoIconName="mail"
+            type="emailAddress"
             secured={false}
           />
           <AuthTextInput
+            onChange={(text) => setPass(text)}
             style={{ marginVertical: 15 }}
             placeHolder="Password"
             entypoIconName="lock"
             secured={true}
           />
           <AuthTextInput
+            onChange={(text) => setPass2(text)}
             placeHolder="Re-type password"
             entypoIconName="lock"
             secured={true}
@@ -73,7 +143,8 @@ export default function Registration({ navigation }) {
               Already have an account?
             </Text>
           </Pressable>
-          <AuthButton text="SIGN UP" />
+
+          <AuthButton text="SIGN UP" handlePress={handleSignUp} />
         </View>
       </View>
     </View>

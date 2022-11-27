@@ -1,10 +1,12 @@
-import { View, Text } from "react-native";
+import { View, Text, TouchableOpacity } from "react-native";
 import React from "react";
 import { Entypo } from "@expo/vector-icons";
 import { Ionicons } from "@expo/vector-icons";
 import AuthTextInput from "./AuthTextInput";
 
-export default function Header() {
+export default function Header({ navigation, currentUser }) {
+  console.log(currentUser, "header");
+
   return (
     <View
       style={{
@@ -23,7 +25,7 @@ export default function Header() {
         <View
           style={{ backgroundColor: "white", borderRadius: 100, padding: 5 }}
         >
-          <Entypo name="menu" size={25} color="#FF7B7D" />
+          <Entypo name="menu" size={25} color="#4FBCDD" />
         </View>
         <Text style={{ fontSize: 25, fontWeight: "bold" }}>E-BILI</Text>
         <View
@@ -33,16 +35,19 @@ export default function Header() {
             justifyContent: "center",
           }}
         >
-          <View
-            style={{
-              backgroundColor: "white",
-              borderRadius: 100,
-              padding: 6,
-              marginRight: 10,
-            }}
-          >
-            <Entypo name="shopping-cart" size={25} color="#FF7B7D" />
-          </View>
+          <TouchableOpacity onPress={() => navigation.navigate("Cart")}>
+            <View
+              style={{
+                backgroundColor: "white",
+                borderRadius: 100,
+                padding: 6,
+                marginRight: 10,
+              }}
+            >
+              <Entypo name="shopping-cart" size={25} color="#4FBCDD" />
+            </View>
+          </TouchableOpacity>
+
           <View
             style={{
               backgroundColor: "#F7A721",
@@ -79,7 +84,7 @@ export default function Header() {
             padding: 5,
           }}
         >
-          <Ionicons name="md-filter" size={24} color="#FF7B7D" />
+          <Ionicons name="md-filter" size={24} color="#4FBCDD" />
         </View>
       </View>
     </View>
