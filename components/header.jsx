@@ -80,16 +80,6 @@ export default function Header({ navigation }) {
           entypoIconName="magnifying-glass"
           secured={false}
         />
-        <View
-          style={{
-            marginLeft: 10,
-            backgroundColor: "white",
-            borderRadius: 100,
-            padding: 5,
-          }}
-        >
-          <Ionicons name="md-filter" size={24} color="#4FBCDD" />
-        </View>
       </View>
     </View>
   );

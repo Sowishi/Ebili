@@ -16,10 +16,10 @@ import Header from "../components/header";
 import { FontAwesome } from "@expo/vector-icons";
 import { auth } from "../firebaseConfig";
 
-export default function Home({ navigation }) {
+export default function Home({ navigation, currentUser, fetchUserData }) {
+  console.log(currentUser);
+
   const [itemDATA, setItemDATA] = useState([]);
-  const [categoryDATA, setCategoryDATA] = useState([]);
-  const [selectedCategory, setSelectedCategory] = useState("all");
   const [refreshing, setRefreshing] = useState(false);
 
   const getProducts = async () => {
@@ -28,56 +28,9 @@ export default function Home({ navigation }) {
     setItemDATA(json);
   };
 
-  const getCategory = async () => {
-    const res = await fetch("https://fakestoreapi.com/products/categories");
-    const json = await res.json();
-    setCategoryDATA(["all", ...json]);
-  };
-
-  let itemDataFiltered = [...itemDATA];
-
-  if (selectedCategory !== "all") {
-    itemDataFiltered = itemDATA.filter((i) => {
-      if (i.category === selectedCategory) {
-        return i;
-      }
-    });
-  }
-
   useEffect(() => {
     getProducts();
-    getCategory();
   }, []);
-
-  const renderCategory = ({ item }) => {
-    return (
-      <Pressable onPress={() => setSelectedCategory(item)}>
-        <View
-          style={{
-            backgroundColor: `${
-              selectedCategory === item ? "#4FBCDD" : "white"
-            }`,
-            flexDirection: "row",
-            alignItems: "center",
-            justifyContent: "center",
-            padding: 10,
-            marginHorizontal: 5,
-            borderRadius: 10,
-          }}
-        >
-          <Text
-            style={{
-              fontSize: "bold",
-              color: `${selectedCategory === item ? "white" : "#4FBCDD"}`,
-              fontSize: 15,
-            }}
-          >
-            {item}
-          </Text>
-        </View>
-      </Pressable>
-    );
-  };
 
   const renderItem = ({ item }) => {
     return (
@@ -144,22 +97,12 @@ export default function Home({ navigation }) {
 
   const onRefresh = () => {
     getProducts();
-    getCategory();
   };
 
   return (
     <SafeAreaView style={{ backgroundColor: "#f8f8f8", flex: 1 }}>
       <Header currentUser={auth} navigation={navigation} />
-      <Banner />
 
-      <View style={{ marginVertical: 10 }}>
-        <FlatList
-          horizontal={true}
-          data={categoryDATA}
-          renderItem={renderCategory}
-          keyExtractor={(item, index) => index}
-        />
-      </View>
       <View
         style={{
           alignItems: "center",
@@ -169,7 +112,7 @@ export default function Home({ navigation }) {
           marginVertical: 10,
         }}
       >
-        <Text style={{ fontWeight: "bold", fontSize: 20 }}>Popular</Text>
+        <Text style={{ fontWeight: "bold", fontSize: 20 }}>Today's Pick</Text>
         <TouchableOpacity
           onPress={() => navigation.navigate("ViewAll", { itemDATA })}
         >
@@ -181,12 +124,11 @@ export default function Home({ navigation }) {
         refreshControl={
           <RefreshControl refreshing={refreshing} onRefresh={onRefresh} />
         }
-        data={itemDataFiltered}
+        data={itemDATA}
         numColumns={2}
         renderItem={renderItem}
         keyExtractor={(item, index) => index}
-        initialNumToRender={5}
-        maxToRenderPerBatch={10}
+        initialNumToRender={10}
       />
     </SafeAreaView>
   );

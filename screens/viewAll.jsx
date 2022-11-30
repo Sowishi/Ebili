@@ -6,13 +6,16 @@ import {
   Image,
   Pressable,
 } from "react-native";
-import React from "react";
+import React, { useEffect, useState } from "react";
 import { FontAwesome } from "@expo/vector-icons";
 import Header from "../components/header";
 
 import { SafeAreaView } from "react-native-safe-area-context";
 export default function ViewALl({ route, navigation }) {
   const data = route.params;
+
+  const [categoryDATA, setCategoryDATA] = useState([]);
+  const [selectedCategory, setSelectedCategory] = useState("all");
 
   const renderItem = ({ item }) => {
     return (
@@ -68,6 +71,56 @@ export default function ViewALl({ route, navigation }) {
     );
   };
 
+  const renderCategory = ({ item }) => {
+    return (
+      <Pressable onPress={() => setSelectedCategory(item)}>
+        <View
+          style={{
+            backgroundColor: `${
+              selectedCategory === item ? "#4FBCDD" : "white"
+            }`,
+            flexDirection: "row",
+            alignItems: "center",
+            justifyContent: "center",
+            padding: 10,
+            marginHorizontal: 5,
+            borderRadius: 10,
+          }}
+        >
+          <Text
+            style={{
+              fontSize: "bold",
+              color: `${selectedCategory === item ? "white" : "#4FBCDD"}`,
+              fontSize: 15,
+            }}
+          >
+            {item}
+          </Text>
+        </View>
+      </Pressable>
+    );
+  };
+
+  const getCategory = async () => {
+    const res = await fetch("https://fakestoreapi.com/products/categories");
+    const json = await res.json();
+    setCategoryDATA(["all", ...json]);
+  };
+
+  let itemDataFiltered = [...data.itemDATA];
+
+  if (selectedCategory !== "all") {
+    itemDataFiltered = data.itemDATA.filter((i) => {
+      if (i.category === selectedCategory) {
+        return i;
+      }
+    });
+  }
+
+  useEffect(() => {
+    getCategory();
+  }, []);
+
   return (
     <SafeAreaView
       style={{
@@ -79,7 +132,15 @@ export default function ViewALl({ route, navigation }) {
     >
       {/* <Header navigation={navigation} /> */}
       <FlatList
-        data={data.itemDATA}
+        style={{ marginVertical: 10 }}
+        horizontal={true}
+        data={categoryDATA}
+        renderItem={renderCategory}
+        keyExtractor={(item, index) => index}
+      />
+
+      <FlatList
+        data={itemDataFiltered}
         numColumns={2}
         renderItem={renderItem}
         keyExtractor={(item, index) => index}

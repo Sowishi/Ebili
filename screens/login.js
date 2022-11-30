@@ -7,10 +7,12 @@ import AuthButton from "../components/AuthButton";
 import { auth } from "../firebaseConfig";
 import { signInWithEmailAndPassword, onAuthStateChanged } from "@firebase/auth";
 import Toast from "react-native-toast-message";
+import Loading from "../components/loading";
 
 export default function Login({ navigation }) {
   const [email, setEmail] = useState();
   const [pass, setPass] = useState();
+  const [loading, setLoading] = useState(false);
 
   useEffect(() => {
     onAuthStateChanged(auth, () => {
@@ -41,12 +43,15 @@ export default function Login({ navigation }) {
     if (result !== false) {
       showErrorToast(result);
     } else {
+      setLoading(true);
       signInWithEmailAndPassword(auth, email, pass)
         .then(() => {
           navigation.replace("Drawer");
+          setLoading(false);
         })
         .catch((error) => {
           showErrorToast(error.code);
+          setLoading(false);
         });
     }
   };
@@ -60,6 +65,7 @@ export default function Login({ navigation }) {
 
   return (
     <View style={{ flex: 1 }}>
+      {loading && <Loading />}
       <ImageBackground
         source={require("../assets/shop.jpg")}
         style={{
@@ -67,7 +73,6 @@ export default function Login({ navigation }) {
         }}
         imageStyle={{ borderBottomRightRadius: 50, borderBottomLeftRadius: 50 }}
       ></ImageBackground>
-
       <View style={{ flex: 2 }}>
         <Text
           style={{

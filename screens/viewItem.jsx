@@ -14,11 +14,11 @@ import { SafeAreaView } from "react-native-safe-area-context";
 import { FontAwesome } from "@expo/vector-icons";
 import { useState } from "react";
 import Toast from "react-native-toast-message";
+import { TextInput } from "react-native-gesture-handler";
 
 export default function ViewItem({ route }) {
   const data = route.params;
   const [addCart, setAddCart] = useState(false);
-  const [count, setCount] = useState(1);
 
   const star = (
     <View
@@ -39,7 +39,7 @@ export default function ViewItem({ route }) {
     setAddCart(false);
     Toast.show({
       type: "success",
-      text1: "ITEM ADDED TO CART!",
+      text1: "You are the current bidder.",
     });
   };
 
@@ -99,35 +99,15 @@ export default function ViewItem({ route }) {
                 alignItems: "center",
               }}
             >
-              <Text style={{ fontSize: 20 }}>Quantity</Text>
-              <View
+              <Text style={{ fontSize: 20 }}>Amount</Text>
+              <TextInput
                 style={{
-                  flexDirection: "row",
-                  justifyContent: "center",
-                  alignItems: "center",
+                  borderBottomWidth: 1,
+                  width: "50%",
+                  borderColor: "#4FBCDD",
+                  marginLeft: 10,
                 }}
-              >
-                <Button
-                  color={"#4FBCDD"}
-                  title="-"
-                  disabled={count === 1 ? true : false}
-                  onPress={() => setCount(count - 1)}
-                ></Button>
-                <Text
-                  style={{
-                    paddingHorizontal: 10,
-                    fontSize: 20,
-                    fontWeight: "bold",
-                  }}
-                >
-                  {count}
-                </Text>
-                <Button
-                  color={"#4FBCDD"}
-                  onPress={() => setCount(count + 1)}
-                  title="+"
-                ></Button>
-              </View>
+              />
             </View>
             <View
               style={{
@@ -140,7 +120,7 @@ export default function ViewItem({ route }) {
               <Pressable
                 onPress={showToast}
                 style={{
-                  backgroundColor: "#E6141C",
+                  backgroundColor: "#46B950",
                   width: "90%",
                   paddingVertical: 15,
                   borderRadius: 10,
@@ -154,7 +134,7 @@ export default function ViewItem({ route }) {
                     textAlign: "center",
                   }}
                 >
-                  ADD TO CART
+                  BID{" "}
                 </Text>
               </Pressable>
             </View>
@@ -204,6 +184,18 @@ export default function ViewItem({ route }) {
               </Text>
               {star}
             </View>
+          </View>
+          <View style={{ marginVertical: 10 }}>
+            <Text>
+              Current Bidder:{" "}
+              <Text style={{ fontWeight: "bold", color: "#4FBCDD" }}>
+                JUAN DELA CRUZ
+              </Text>
+            </Text>
+            <Text>
+              Amount:{" "}
+              <Text style={{ fontWeight: "bold", color: "#4FBCDD" }}>₱100</Text>
+            </Text>
           </View>
           <View>
             <Text

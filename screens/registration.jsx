@@ -11,7 +11,11 @@ import AuthButton from "../components/AuthButton";
 
 import { auth } from "../firebaseConfig";
 import { createUserWithEmailAndPassword } from "@firebase/auth";
+import Loading from "../components/loading";
 import Toast from "react-native-toast-message";
+
+import { userCol } from "../firebaseConfig";
+import { addDoc } from "@firebase/firestore";
 
 export default function Registration({ navigation }) {
   const [firstName, setFirstName] = useState();
@@ -19,6 +23,7 @@ export default function Registration({ navigation }) {
   const [email, setEmail] = useState();
   const [pass, setPass] = useState();
   const [pass2, setPass2] = useState();
+  const [loading, setLoading] = useState(false);
 
   const handleError = () => {
     const reg = /^\w+([\.-]?\w+)*@\w+([\.-]?\w+)*(\.\w{2,3})+$/;
@@ -47,15 +52,25 @@ export default function Registration({ navigation }) {
     if (result !== false) {
       showErrorToast(result);
     } else {
+      setLoading(true);
       createUserWithEmailAndPassword(auth, email, pass)
         .then((userCredentials) => {
-          // let user = userCredentials.user;
-          // user.displayName = firstName;
+          addDoc(userCol, {
+            id: userCredentials.user.uid,
+            firstName: firstName,
+            lastName: lastName,
+            role: "customer",
+            photoUrl:
+              "https://thumbs.dreamstime.com/b/default-avatar-profile-vector-user-profile-default-avatar-profile-vector-user-profile-profile-179376714.jpg",
+          });
+
           showSuccessToast();
           navigation.navigate("Login");
+          setLoading(false);
         })
         .catch((error) => {
           showErrorToast(error.code);
+          setLoading(false);
         });
     }
   };
@@ -76,6 +91,7 @@ export default function Registration({ navigation }) {
 
   return (
     <View style={{ flex: 1 }}>
+      {loading && <Loading />}
       <ImageBackground
         source={require("../assets/shop-2.webp")}
         style={{
