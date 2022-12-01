@@ -1,10 +1,44 @@
-import { View, Text, TouchableOpacity } from "react-native";
-import React from "react";
+import {
+  View,
+  Text,
+  TouchableOpacity,
+  Image,
+  ActivityIndicator,
+} from "react-native";
+import React, { useEffect, useState } from "react";
 import { Entypo } from "@expo/vector-icons";
 import { Ionicons } from "@expo/vector-icons";
 import AuthTextInput from "./AuthTextInput";
+import { userCol, db, auth } from "../firebaseConfig";
+import {
+  getDocs,
+  query,
+  where,
+  updateDoc,
+  doc,
+  onSnapshot,
+} from "firebase/firestore";
 
 export default function Header({ navigation }) {
+  const user = auth;
+  const [currentUser, setCurrentUser] = useState();
+
+  const fetchUserData = () => {
+    const q = query(userCol, where("id", "==", user.currentUser.uid));
+
+    onSnapshot(q, (snapshot) => {
+      const users = [];
+      snapshot.docs.forEach((doc) => {
+        users.push({ ...doc.data(), docID: doc.id });
+      });
+      setCurrentUser(users[0]);
+    });
+  };
+
+  useEffect(() => {
+    fetchUserData();
+  }, []);
+
   return (
     <View
       style={{
@@ -51,15 +85,14 @@ export default function Header({ navigation }) {
             </View>
           </TouchableOpacity>
           <TouchableOpacity onPress={() => navigation.navigate("User")}>
-            <View
-              style={{
-                backgroundColor: "#F7A721",
-                borderRadius: 100,
-                padding: 5,
-              }}
-            >
-              <Entypo name="user" size={25} color="black" />
-            </View>
+            {currentUser ? (
+              <Image
+                source={{ uri: currentUser.photoUrl }}
+                style={{ width: 35, height: 35, borderRadius: 100 }}
+              />
+            ) : (
+              <ActivityIndicator />
+            )}
           </TouchableOpacity>
         </View>
       </View>

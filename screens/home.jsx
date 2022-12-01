@@ -16,9 +16,7 @@ import Header from "../components/header";
 import { FontAwesome } from "@expo/vector-icons";
 import { auth } from "../firebaseConfig";
 
-export default function Home({ navigation, currentUser, fetchUserData }) {
-  console.log(currentUser);
-
+export default function Home({ navigation }) {
   const [itemDATA, setItemDATA] = useState([]);
   const [refreshing, setRefreshing] = useState(false);
 

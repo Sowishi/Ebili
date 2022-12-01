@@ -11,6 +11,7 @@ import ViewItem from "./screens/viewItem";
 import User from "./screens/user";
 
 import Toast from "react-native-toast-message";
+import PublicCHat from "./screens/publicChat";
 
 export default function App() {
   const Stack = createStackNavigator();
@@ -20,6 +21,7 @@ export default function App() {
     return (
       <Drawer.Navigator screenOptions={{ headerShown: false }}>
         <Drawer.Screen name="Home" component={Home} />
+        <Drawer.Screen name="PublicChat" component={PublicCHat} />
       </Drawer.Navigator>
     );
   };
