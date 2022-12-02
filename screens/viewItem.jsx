@@ -29,7 +29,9 @@ export default function ViewItem({ route }) {
     });
   };
 
-  console.log(data);
+  const handleBid = () => {
+    console.log(data);
+  };
 
   return (
     <SafeAreaView style={{ flex: 1 }}>
@@ -64,7 +66,7 @@ export default function ViewItem({ route }) {
             >
               <Image
                 style={{ width: 100, height: 100 }}
-                source={{ uri: data.image }}
+                source={{ uri: data.productPhotoUrl }}
               />
               <View
                 style={{ justifyContent: "center", alignItems: "flex-start" }}
@@ -103,7 +105,7 @@ export default function ViewItem({ route }) {
               }}
             >
               <Pressable
-                onPress={showToast}
+                onPress={handleBid}
                 style={{
                   backgroundColor: "#46B950",
                   width: "90%",
@@ -213,6 +215,12 @@ export default function ViewItem({ route }) {
                   {data.createdAt.toDate().toDateString()}
                 </Text>
               )}
+            </Text>
+            <Text>
+              Bidding ends in:{" "}
+              <Text style={{ fontWeight: "bold", color: "#4FBCDD" }}>
+                {data.bidTime}
+              </Text>
             </Text>
           </View>
           <View>

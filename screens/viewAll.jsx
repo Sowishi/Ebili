@@ -45,8 +45,8 @@ export default function ViewALl({ route, navigation }) {
           >
             <Image
               source={{ uri: item.productPhotoUrl }}
-              style={{ width: "70%", height: "70%" }}
-              resizeMode="contain"
+              style={{ width: "80%", height: "80%" }}
+              resizeMode="cover"
             />
           </View>
 

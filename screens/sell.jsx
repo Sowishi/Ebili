@@ -93,7 +93,7 @@ export default function Sell({ navigation }) {
       const data = {
         category: category,
         title: title,
-        bitTime: bidTime,
+        bidTime: bidTime,
         price: price,
         description: description,
         productPhotoUrl: productPhotoUrl,

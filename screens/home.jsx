@@ -69,8 +69,8 @@ export default function Home({ navigation }) {
           >
             <Image
               source={{ uri: item.productPhotoUrl }}
-              style={{ width: "70%", height: "70%" }}
-              resizeMode="contain"
+              style={{ width: "80%", height: "80%", borderRadius: 10 }}
+              resizeMode="cover"
             />
           </View>
 
