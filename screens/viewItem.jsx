@@ -8,20 +8,51 @@ import {
   Alert,
   Dimensions,
   Button,
+  ScrollView,
 } from "react-native";
-import React from "react";
+import React, { useEffect } from "react";
 import { SafeAreaView } from "react-native-safe-area-context";
 import { FontAwesome } from "@expo/vector-icons";
 import { useState } from "react";
 import Toast from "react-native-toast-message";
 import { TextInput } from "react-native-gesture-handler";
-import { Timestamp } from "@firebase/firestore";
+import CountDown from "react-native-countdown-component";
+import { userCol, db, auth } from "../firebaseConfig";
+import {
+  getDocs,
+  query,
+  where,
+  updateDoc,
+  doc,
+  onSnapshot,
+  collection,
+} from "firebase/firestore";
 
 export default function ViewItem({ route }) {
   const data = route.params;
   const [addCart, setAddCart] = useState(false);
+  const [bid, setBid] = useState();
 
-  const showToast = () => {
+  const user = auth;
+  const [currentUser, setCurrentUser] = useState();
+
+  const fetchUserData = () => {
+    const q = query(userCol, where("id", "==", user.currentUser.uid));
+
+    onSnapshot(q, (snapshot) => {
+      const users = [];
+      snapshot.docs.forEach((doc) => {
+        users.push({ ...doc.data(), docID: doc.id });
+      });
+      setCurrentUser(users[0]);
+    });
+  };
+
+  useEffect(() => {
+    fetchUserData();
+  }, []);
+
+  const showSuccessToast = () => {
     setAddCart(false);
     Toast.show({
       type: "success",
@@ -29,8 +60,28 @@ export default function ViewItem({ route }) {
     });
   };
 
+  const showErrorToast = (text) => {
+    setAddCart(false);
+    Toast.show({
+      type: "error",
+      text1: text,
+    });
+  };
+
   const handleBid = () => {
-    console.log(data);
+    if (parseInt(bid) < data.price) {
+      showErrorToast("Your bid must be higher than the current price/bid");
+    } else if (currentUser.docID === data.owner.docID) {
+      showErrorToast("You're cannot bid in your own item!");
+    } else {
+      const productDoc = doc(db, "products", data.docID);
+      updateDoc(productDoc, {
+        currentBidder: currentUser.firstName + "" + currentUser.lastName,
+        bidAmount: parseInt(bid),
+      }).then(() => {
+        showSuccessToast("Your bid is place successfully!");
+      });
+    }
   };
 
   return (
@@ -88,6 +139,8 @@ export default function ViewItem({ route }) {
             >
               <Text style={{ fontSize: 20 }}>Amount</Text>
               <TextInput
+                keyboardType="numeric"
+                onChangeText={(text) => setBid(text)}
                 style={{
                   borderBottomWidth: 1,
                   width: "50%",
@@ -142,7 +195,7 @@ export default function ViewItem({ route }) {
           style={{ width: "70%", height: "70%" }}
         />
       </View>
-      <View
+      <ScrollView
         style={{
           position: "relative",
           backgroundColor: "white",
@@ -202,11 +255,15 @@ export default function ViewItem({ route }) {
           <View style={{ marginVertical: 10 }}>
             <Text>
               Current Bidder:{" "}
-              <Text style={{ fontWeight: "bold", color: "#4FBCDD" }}>None</Text>
+              <Text style={{ fontWeight: "bold", color: "#4FBCDD" }}>
+                {data.currentBidder}
+              </Text>
             </Text>
             <Text>
               Amount:{" "}
-              <Text style={{ fontWeight: "bold", color: "#4FBCDD" }}>₱0 </Text>
+              <Text style={{ fontWeight: "bold", color: "#4FBCDD" }}>
+                ₱{data.bidAmount}{" "}
+              </Text>
             </Text>
             <Text>
               Listed on:{" "}
@@ -219,7 +276,7 @@ export default function ViewItem({ route }) {
             <Text>
               Bidding ends in:{" "}
               <Text style={{ fontWeight: "bold", color: "#4FBCDD" }}>
-                {data.bidTime}
+                {data.bidTime}{" "}
               </Text>
             </Text>
           </View>
@@ -254,7 +311,7 @@ export default function ViewItem({ route }) {
         >
           <FontAwesome name="cart-plus" size={24} color="white" />
         </Pressable>
-      </View>
+      </ScrollView>
     </SafeAreaView>
   );
 }

@@ -1,4 +1,11 @@
-import { View, Text, TextInput, ScrollView, Image } from "react-native";
+import {
+  View,
+  Text,
+  TextInput,
+  ScrollView,
+  Image,
+  ActivityIndicator,
+} from "react-native";
 import React, { useEffect, useState } from "react";
 import { SafeAreaView } from "react-native-safe-area-context";
 import Header from "../components/header";
@@ -35,6 +42,7 @@ export default function Sell({ navigation }) {
   const [description, setDescription] = useState();
 
   const [currentUser, setCurrentUser] = useState();
+  const [disable, setDisable] = useState(false);
 
   const fetchUserData = () => {
     const q = query(userCol, where("id", "==", user.currentUser.uid));
@@ -80,6 +88,8 @@ export default function Sell({ navigation }) {
   };
 
   const handleUploadItem = () => {
+    setDisable(true);
+
     if (
       categories === undefined ||
       title === undefined ||
@@ -89,6 +99,7 @@ export default function Sell({ navigation }) {
       productPhotoUrl === undefined
     ) {
       showErrorToast();
+      setDisable(false);
     } else {
       const data = {
         category: category,
@@ -99,14 +110,18 @@ export default function Sell({ navigation }) {
         productPhotoUrl: productPhotoUrl,
         createdAt: serverTimestamp(),
         owner: currentUser,
+        currentBidder: "None",
+        bidAmount: 0,
       };
       const productRef = collection(db, "products");
       addDoc(productRef, data)
         .then(() => {
           showSuccessToast("Your item is posted");
+          setDisable(false);
         })
         .catch((e) => {
           console.log(e);
+          setDisable(false);
         });
     }
   };
@@ -129,6 +144,8 @@ export default function Sell({ navigation }) {
     fetchUserData();
   }, []);
 
+  console.log(disable);
+
   return (
     <SafeAreaView>
       <Header navigation={navigation} />
@@ -140,7 +157,12 @@ export default function Sell({ navigation }) {
           paddingHorizontal: 20,
         }}
       >
-        <TouchableOpacity onPress={handleUploadItem}>
+        <TouchableOpacity
+          onPress={() => {
+            handleUploadItem();
+          }}
+          disabled={disable}
+        >
           <View
             style={{
               backgroundColor: "#4FBCDD",
@@ -149,9 +171,15 @@ export default function Sell({ navigation }) {
               paddingVertical: 5,
             }}
           >
-            <Text style={{ fontSize: 20, color: "white", fontWeight: "bold" }}>
-              Post
-            </Text>
+            {disable ? (
+              <ActivityIndicator color={"white"} size={"small"} />
+            ) : (
+              <Text
+                style={{ fontSize: 20, color: "white", fontWeight: "bold" }}
+              >
+                Post
+              </Text>
+            )}
           </View>
         </TouchableOpacity>
       </View>
