@@ -14,7 +14,14 @@ import { SafeAreaView } from "react-native-safe-area-context";
 export default function ViewALl({ route, navigation }) {
   const data = route.params;
 
-  const [categoryDATA, setCategoryDATA] = useState([]);
+  const categoryDATA = [
+    "all",
+    "electronics",
+    "jewelery",
+    "men's clothing",
+    "women's clothing",
+    "other",
+  ];
   const [selectedCategory, setSelectedCategory] = useState("all");
 
   const renderItem = ({ item }) => {
@@ -37,7 +44,7 @@ export default function ViewALl({ route, navigation }) {
             }}
           >
             <Image
-              source={{ uri: item.image }}
+              source={{ uri: item.productPhotoUrl }}
               style={{ width: "70%", height: "70%" }}
               resizeMode="contain"
             />
@@ -59,12 +66,7 @@ export default function ViewALl({ route, navigation }) {
                 justifyContent: "flex-start",
                 alignItems: "center",
               }}
-            >
-              <FontAwesome name="star" size={13} color="#E6E121" />
-              <Text style={{ marginLeft: 5, fontWeight: "bold" }}>
-                {item.rating.rate}
-              </Text>
-            </View>
+            ></View>
           </View>
         </View>
       </Pressable>
@@ -101,12 +103,6 @@ export default function ViewALl({ route, navigation }) {
     );
   };
 
-  const getCategory = async () => {
-    const res = await fetch("https://fakestoreapi.com/products/categories");
-    const json = await res.json();
-    setCategoryDATA(["all", ...json]);
-  };
-
   let itemDataFiltered = [...data.itemDATA];
 
   if (selectedCategory !== "all") {
@@ -116,12 +112,6 @@ export default function ViewALl({ route, navigation }) {
       }
     });
   }
-
-  console.log(categoryDATA);
-
-  useEffect(() => {
-    getCategory();
-  }, []);
 
   return (
     <SafeAreaView
@@ -140,15 +130,16 @@ export default function ViewALl({ route, navigation }) {
         renderItem={renderCategory}
         keyExtractor={(item, index) => index}
       />
-
-      <FlatList
-        data={itemDataFiltered}
-        numColumns={2}
-        renderItem={renderItem}
-        keyExtractor={(item, index) => index}
-        initialNumToRender={5}
-        maxToRenderPerBatch={10}
-      />
+      <View style={{ height: "90%", width: "100%" }}>
+        <FlatList
+          data={itemDataFiltered}
+          numColumns={2}
+          renderItem={renderItem}
+          keyExtractor={(item, index) => index}
+          initialNumToRender={5}
+          maxToRenderPerBatch={10}
+        />
+      </View>
     </SafeAreaView>
   );
 }

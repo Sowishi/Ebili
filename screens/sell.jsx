@@ -1,5 +1,5 @@
 import { View, Text, TextInput, ScrollView, Image } from "react-native";
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import { SafeAreaView } from "react-native-safe-area-context";
 import Header from "../components/header";
 import SelectDropdown from "react-native-select-dropdown";
@@ -9,11 +9,44 @@ import { MaterialIcons } from "@expo/vector-icons";
 import { storage } from "../firebaseConfig";
 import { ref, uploadBytes, getDownloadURL } from "@firebase/storage";
 import { Toast } from "react-native-toast-message/lib/src/Toast";
+import { userCol, db, auth } from "../firebaseConfig";
+import {
+  getDocs,
+  query,
+  where,
+  updateDoc,
+  doc,
+  onSnapshot,
+  collection,
+  addDoc,
+} from "firebase/firestore";
 
 import * as ImagePicker from "expo-image-picker";
+import { serverTimestamp } from "firebase/firestore";
 
 export default function Sell({ navigation }) {
+  const user = auth;
+
   const [productPhotoUrl, setProductPhotoUrl] = useState();
+  const [category, setCategory] = useState();
+  const [title, setTitle] = useState();
+  const [bidTime, setBidTime] = useState();
+  const [price, setPrice] = useState();
+  const [description, setDescription] = useState();
+
+  const [currentUser, setCurrentUser] = useState();
+
+  const fetchUserData = () => {
+    const q = query(userCol, where("id", "==", user.currentUser.uid));
+
+    onSnapshot(q, (snapshot) => {
+      const users = [];
+      snapshot.docs.forEach((doc) => {
+        users.push({ ...doc.data(), docID: doc.id });
+      });
+      setCurrentUser(users[0]);
+    });
+  };
 
   const categories = [
     "electronics",
@@ -27,11 +60,8 @@ export default function Sell({ navigation }) {
     let result = await ImagePicker.launchImageLibraryAsync({
       mediaTypes: ImagePicker.MediaTypeOptions.All,
       allowsEditing: true,
-      aspect: [4, 3],
       quality: 1,
     });
-
-    console.log(result);
 
     if (!result.canceled) {
       const img = result.assets[0].uri;
@@ -43,22 +73,88 @@ export default function Sell({ navigation }) {
       uploadBytes(imgRef, bytes).then(() => {
         getDownloadURL(imgRef).then((url) => {
           setProductPhotoUrl(url);
-          showSuccessToast();
+          showSuccessToast("Uploaded Successfully");
         });
       });
     }
   };
 
-  const showSuccessToast = () => {
+  const handleUploadItem = () => {
+    if (
+      categories === undefined ||
+      title === undefined ||
+      bidTime === undefined ||
+      price === undefined ||
+      description === undefined ||
+      productPhotoUrl === undefined
+    ) {
+      showErrorToast();
+    } else {
+      const data = {
+        category: category,
+        title: title,
+        bitTime: bidTime,
+        price: price,
+        description: description,
+        productPhotoUrl: productPhotoUrl,
+        createdAt: serverTimestamp(),
+        owner: currentUser,
+      };
+      const productRef = collection(db, "products");
+      addDoc(productRef, data)
+        .then(() => {
+          showSuccessToast("Your item is posted");
+        })
+        .catch((e) => {
+          console.log(e);
+        });
+    }
+  };
+
+  const showSuccessToast = (text) => {
     Toast.show({
       type: "success",
-      text1: "Uploaded Successfully",
+      text1: text,
     });
   };
+
+  const showErrorToast = () => {
+    Toast.show({
+      type: "error",
+      text1: "All fields must not be empty!",
+    });
+  };
+
+  useEffect(() => {
+    fetchUserData();
+  }, []);
 
   return (
     <SafeAreaView>
       <Header navigation={navigation} />
+      <View
+        style={{
+          width: "100%",
+          justifyContent: "flex-end",
+          flexDirection: "row",
+          paddingHorizontal: 20,
+        }}
+      >
+        <TouchableOpacity onPress={handleUploadItem}>
+          <View
+            style={{
+              backgroundColor: "#4FBCDD",
+              paddingHorizontal: 20,
+              borderRadius: 5,
+              paddingVertical: 5,
+            }}
+          >
+            <Text style={{ fontSize: 20, color: "white", fontWeight: "bold" }}>
+              Post
+            </Text>
+          </View>
+        </TouchableOpacity>
+      </View>
       <ScrollView>
         <View
           style={{
@@ -88,7 +184,7 @@ export default function Sell({ navigation }) {
             buttonTextStyle={{ color: "white", fontWeight: "bold" }}
             data={categories}
             onSelect={(selectedItem, index) => {
-              console.log(selectedItem, index);
+              setCategory(selectedItem);
             }}
             buttonTextAfterSelection={(selectedItem, index) => {
               return selectedItem;
@@ -117,6 +213,7 @@ export default function Sell({ navigation }) {
             What are you selling?
           </Text>
           <TextInput
+            onChangeText={(text) => setTitle(text)}
             style={{
               borderBottomWidth: 1,
               borderBottomColor: "#4FBCDD",
@@ -150,9 +247,17 @@ export default function Sell({ navigation }) {
               height: 40,
             }}
             buttonTextStyle={{ color: "white", fontWeight: "bold" }}
-            data={categories}
+            data={[
+              "1 min",
+              "5 min",
+              "10min",
+              "1 hour",
+              "5 hours",
+              "10 hours",
+              "1 day",
+            ]}
             onSelect={(selectedItem, index) => {
-              console.log(selectedItem, index);
+              setBidTime(selectedItem);
             }}
             buttonTextAfterSelection={(selectedItem, index) => {
               return selectedItem;
@@ -181,6 +286,8 @@ export default function Sell({ navigation }) {
             Price (₱)
           </Text>
           <TextInput
+            keyboardType="numeric"
+            onChangeText={(text) => setPrice(text)}
             style={{
               borderBottomWidth: 1,
               borderBottomColor: "#4FBCDD",
@@ -207,6 +314,7 @@ export default function Sell({ navigation }) {
             Description
           </Text>
           <TextInput
+            onChangeText={(text) => setDescription(text)}
             style={{
               borderWidth: 1,
               borderColor: "#4FBCDD",
@@ -271,32 +379,31 @@ export default function Sell({ navigation }) {
             </TouchableOpacity>
           </View>
         </View>
-        {productPhotoUrl && (
-          <View
+
+        <View
+          style={{
+            justifyContent: "center",
+            alignItems: "center",
+            marginHorizontal: 10,
+            marginVertical: 10,
+            marginBottom: 200,
+          }}
+        >
+          <Text
             style={{
-              justifyContent: "center",
-              alignItems: "center",
-              marginHorizontal: 10,
-              marginVertical: 10,
-              marginBottom: 200,
+              alignSelf: "flex-start",
+              fontSize: 16,
+              color: "gray",
             }}
           >
-            <Text
-              style={{
-                alignSelf: "flex-start",
-                fontSize: 16,
-                color: "gray",
-              }}
-            >
-              Preview
-            </Text>
-            <Image
-              resizeMode="contain"
-              source={{ uri: productPhotoUrl }}
-              style={{ width: 200, height: 200 }}
-            />
-          </View>
-        )}
+            Preview
+          </Text>
+          <Image
+            resizeMode="contain"
+            source={{ uri: productPhotoUrl }}
+            style={{ width: 200, height: 200 }}
+          />
+        </View>
       </ScrollView>
     </SafeAreaView>
   );

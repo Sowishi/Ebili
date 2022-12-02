@@ -10,12 +10,14 @@ import {
   Pressable,
   TouchableOpacity,
   RefreshControl,
+  ActivityIndicator,
 } from "react-native";
 
 import Header from "../components/header";
 import { FontAwesome } from "@expo/vector-icons";
-import { auth } from "../firebaseConfig";
+import { auth, db } from "../firebaseConfig";
 import Loading from "../components/loading";
+import { collection, onSnapshot } from "firebase/firestore";
 
 export default function Home({ navigation }) {
   const [itemDATA, setItemDATA] = useState([]);
@@ -23,11 +25,14 @@ export default function Home({ navigation }) {
   const [loading, setLoading] = useState();
 
   const getProducts = async () => {
-    setLoading(true);
-    const res = await fetch("https://fakestoreapi.com/products");
-    const json = await res.json();
-    setItemDATA(json);
-    setLoading(false);
+    const productsRef = collection(db, "products");
+    onSnapshot(productsRef, (snapshot) => {
+      const products = [];
+      snapshot.docs.forEach((doc) => {
+        products.push({ ...doc.data(), docID: doc.id });
+      });
+      setItemDATA(products);
+    });
   };
 
   useEffect(() => {
@@ -63,7 +68,7 @@ export default function Home({ navigation }) {
             }}
           >
             <Image
-              source={{ uri: item.image }}
+              source={{ uri: item.productPhotoUrl }}
               style={{ width: "70%", height: "70%" }}
               resizeMode="contain"
             />
@@ -85,12 +90,7 @@ export default function Home({ navigation }) {
                 justifyContent: "flex-start",
                 alignItems: "center",
               }}
-            >
-              <FontAwesome name="star" size={13} color="#E6E121" />
-              <Text style={{ marginLeft: 5, fontWeight: "bold" }}>
-                {item.rating.rate}
-              </Text>
-            </View>
+            ></View>
           </View>
         </View>
       </Pressable>

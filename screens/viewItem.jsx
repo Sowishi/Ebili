@@ -15,25 +15,11 @@ import { FontAwesome } from "@expo/vector-icons";
 import { useState } from "react";
 import Toast from "react-native-toast-message";
 import { TextInput } from "react-native-gesture-handler";
+import { Timestamp } from "@firebase/firestore";
 
 export default function ViewItem({ route }) {
   const data = route.params;
   const [addCart, setAddCart] = useState(false);
-
-  const star = (
-    <View
-      style={{
-        justifyContent: "center",
-        alignItems: "center",
-        flexDirection: "row",
-      }}
-    >
-      <FontAwesome name="star" size={24} color="#E6E121" />
-      <Text style={{ marginLeft: 5, fontWeight: "bold" }}>
-        {data.rating.rate}
-      </Text>
-    </View>
-  );
 
   const showToast = () => {
     setAddCart(false);
@@ -88,7 +74,6 @@ export default function ViewItem({ route }) {
                 >
                   ₱{data.price}
                 </Text>
-                {star}
               </View>
             </View>
             <View
@@ -151,7 +136,7 @@ export default function ViewItem({ route }) {
       >
         <Image
           resizeMode="contain"
-          source={{ uri: data.image }}
+          source={{ uri: data.productPhotoUrl }}
           style={{ width: "70%", height: "70%" }}
         />
       </View>
@@ -172,7 +157,7 @@ export default function ViewItem({ route }) {
             }}
           >
             <View style={{ width: "70%" }}>
-              <Text style={{ fontSize: 20, fontWeight: "bold" }}>
+              <Text style={{ fontSize: 23, fontWeight: "bold" }}>
                 {data.title}
               </Text>
             </View>
@@ -182,19 +167,52 @@ export default function ViewItem({ route }) {
               >
                 ₱{data.price}
               </Text>
-              {star}
+            </View>
+          </View>
+          <View style={{ marginVertical: 10 }}>
+            <Text
+              style={{
+                marginTop: 10,
+                fontWeight: "bold",
+                fontSize: 20,
+                marginVertical: 5,
+                fontSize: 20,
+              }}
+            >
+              Seller
+            </Text>
+            <View
+              style={{
+                flexDirection: "row",
+                alignItems: "flex-start",
+                justifyContent: "flex-start",
+              }}
+            >
+              <Image
+                source={{ uri: data.owner.photoUrl }}
+                style={{ width: 50, height: 50, borderRadius: 100 }}
+              />
+              <Text style={{ marginLeft: 5 }}>
+                {data.owner.firstName + " " + data.owner.lastName}
+              </Text>
             </View>
           </View>
           <View style={{ marginVertical: 10 }}>
             <Text>
               Current Bidder:{" "}
-              <Text style={{ fontWeight: "bold", color: "#4FBCDD" }}>
-                JUAN DELA CRUZ
-              </Text>
+              <Text style={{ fontWeight: "bold", color: "#4FBCDD" }}>None</Text>
             </Text>
             <Text>
               Amount:{" "}
-              <Text style={{ fontWeight: "bold", color: "#4FBCDD" }}>₱100</Text>
+              <Text style={{ fontWeight: "bold", color: "#4FBCDD" }}>₱0 </Text>
+            </Text>
+            <Text>
+              Listed on:{" "}
+              {data && (
+                <Text style={{ fontWeight: "bold", color: "#4FBCDD" }}>
+                  {data.createdAt.toDate().toDateString()}
+                </Text>
+              )}
             </Text>
           </View>
           <View>
