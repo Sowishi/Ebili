@@ -117,6 +117,8 @@ export default function ViewALl({ route, navigation }) {
     });
   }
 
+  console.log(categoryDATA);
+
   useEffect(() => {
     getCategory();
   }, []);

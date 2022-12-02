@@ -13,6 +13,8 @@ export default function Loading() {
         width: "100%",
         height: "100%",
         zIndex: 99,
+        left: 0,
+        top: 0,
       }}
     >
       <ActivityIndicator size="large" color="white" />

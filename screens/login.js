@@ -1,4 +1,4 @@
-import { View, Text, Pressable, ImageBackground } from "react-native";
+import { View, Text, Pressable, ImageBackground, BackHandler} from "react-native";
 import React, { useEffect, useState } from "react";
 import { AntDesign } from "@expo/vector-icons";
 import AuthTextInput from "../components/AuthTextInput";
@@ -20,6 +20,11 @@ export default function Login({ navigation }) {
         navigation.replace("Drawer");
       }
     });
+    const backHandler = BackHandler.addEventListener(
+      "hardwareBackPress",
+      () => true
+    );
+    return () => backHandler.remove();
   });
 
   const handleError = () => {

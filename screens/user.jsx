@@ -5,6 +5,7 @@ import {
   Image,
   TouchableOpacity,
   ActivityIndicator,
+  BackHandler,
 } from "react-native";
 import React, { useEffect, useState } from "react";
 import { SafeAreaView } from "react-native-safe-area-context";
@@ -84,7 +85,6 @@ export default function User({ navigation }) {
       const bytes = await imgFetch.blob();
 
       uploadBytes(imgRef, bytes).then(() => {
-        console.warn("uploaded");
         getDownloadURL(imgRef).then((url) => {
           updateProfilePic(url, currentUser.docID);
         });
@@ -250,7 +250,7 @@ export default function User({ navigation }) {
           alignItems: "center",
         }}
       >
-        <Pressable
+        {/* <Pressable
           style={{
             marginVertical: 20,
             justifyContent: "center",
@@ -273,7 +273,7 @@ export default function User({ navigation }) {
           >
             SAVE
           </Text>
-        </Pressable>
+        </Pressable> */}
         <Pressable
           style={{
             marginVertical: 20,

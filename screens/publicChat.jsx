@@ -1,4 +1,11 @@
-import { View, Text, FlatList, TextInput, Image } from "react-native";
+import {
+  View,
+  Text,
+  FlatList,
+  TextInput,
+  Image,
+  ActivityIndicator,
+} from "react-native";
 import React, { useEffect, useRef, useState } from "react";
 import { SafeAreaView } from "react-native-safe-area-context";
 import Header from "../components/header";
@@ -19,6 +26,9 @@ import {
 import { db } from "../firebaseConfig";
 import { auth, userCol } from "../firebaseConfig";
 
+import { Toast } from "react-native-toast-message/lib/src/Toast";
+import Loading from "../components/loading";
+
 export default function PublicCHat({ navigation }) {
   const user = auth;
 
@@ -31,21 +41,27 @@ export default function PublicCHat({ navigation }) {
   const [text, setText] = useState();
 
   const handleSend = () => {
-    const messagesRef = collection(db, "messages");
-    addDoc(messagesRef, {
-      userUID: currentUser.id,
-      createdAt: serverTimestamp(),
-      text: text,
-      photoUrl: currentUser.photoUrl,
-      firstName: currentUser.firstName,
-    });
-    textInputRef.current.clear();
-    msgRef.current.scrollToEnd();
+    if (text === "" || text === undefined) {
+      showErrorToast();
+      textInputRef.current.clear();
+    } else {
+      const messagesRef = collection(db, "messages");
+      addDoc(messagesRef, {
+        userUID: currentUser.id,
+        createdAt: serverTimestamp(),
+        text: text,
+        photoUrl: currentUser.photoUrl,
+        firstName: currentUser.firstName,
+      });
+      textInputRef.current.clear();
+      setText("");
+      msgRef.current.scrollToEnd();
+    }
   };
 
   const fetchMessages = () => {
     const messagesRef = collection(db, "messages");
-    const q = query(messagesRef, orderBy("createdAt"), limit(30));
+    const q = query(messagesRef, orderBy("createdAt", "desc"), limit(30));
 
     onSnapshot(q, (snapshot) => {
       const messages = [];
@@ -53,7 +69,7 @@ export default function PublicCHat({ navigation }) {
         messages.push(doc.data());
       });
 
-      setMessages(messages);
+      setMessages(messages.reverse());
     });
   };
 
@@ -71,6 +87,13 @@ export default function PublicCHat({ navigation }) {
       .catch((e) => {
         console.log(e);
       });
+  };
+
+  const showErrorToast = () => {
+    Toast.show({
+      type: "error",
+      text1: "Your message cannot be empty",
+    });
   };
 
   const renderMessages = ({ item }) => {
@@ -137,56 +160,68 @@ export default function PublicCHat({ navigation }) {
   return (
     <SafeAreaView style={{ flex: 1, backgroundColor: "#f8f8f8" }}>
       <Header navigation={navigation} />
-      <View style={{ flex: 6 }}>
-        <FlatList
-          ref={msgRef}
-          data={messages}
-          renderItem={renderMessages}
-          keyExtractor={(item, index) => index}
-        />
-      </View>
-      <View
-        style={{
-          flex: 1,
-          justifyContent: "center",
-          alignItems: "center",
-          flexDirection: "row",
-          paddingHorizontal: 30,
-        }}
-      >
-        <TextInput
-          ref={textInputRef}
-          clearButtonMode="always"
-          onChangeText={(text) => setText(text)}
-          style={{ borderBottomWidth: 1, flex: 1, borderColor: "#4FBCDD" }}
-        />
-        <TouchableOpacity
-          style={{
-            marginLeft: 10,
-            backgroundColor: "#4FBCDD",
-            paddingHorizontal: 10,
-            borderRadius: 5,
-          }}
-          onPress={handleSend}
-        >
-          <View
-            style={{
-              flexDirection: "row",
-              justifyContent: "center",
-              alignItems: "center",
-            }}
-          >
-            <Text style={{ fontSize: 20, fontWeight: "bold", color: "white" }}>
-              Send
-            </Text>
-            <Feather
-              style={{ marginLeft: 5 }}
-              name="send"
-              size={20}
-              color="white"
+      <View style={{ flex: 1 }}>
+        <Text style={{ fontSize: 25, fontWeight: "bold", textAlign: "center" }}>
+          Public Chat
+        </Text>
+        {messages ? (
+          <View style={{ flex: 6 }}>
+            <FlatList
+              ref={msgRef}
+              data={messages}
+              renderItem={renderMessages}
+              keyExtractor={(item, index) => index}
             />
           </View>
-        </TouchableOpacity>
+        ) : (
+          <ActivityIndicator />
+        )}
+
+        <View
+          style={{
+            flex: 1,
+            justifyContent: "center",
+            alignItems: "center",
+            flexDirection: "row",
+            paddingHorizontal: 30,
+          }}
+        >
+          <TextInput
+            ref={textInputRef}
+            clearButtonMode="always"
+            onChangeText={(text) => setText(text)}
+            style={{ borderBottomWidth: 1, flex: 1, borderColor: "#4FBCDD" }}
+          />
+          <TouchableOpacity
+            style={{
+              marginLeft: 10,
+              backgroundColor: "#4FBCDD",
+              paddingHorizontal: 10,
+              borderRadius: 5,
+            }}
+            onPress={handleSend}
+          >
+            <View
+              style={{
+                flexDirection: "row",
+                justifyContent: "center",
+                alignItems: "center",
+              }}
+            >
+              <Text
+                style={{ fontSize: 20, fontWeight: "bold", color: "white" }}
+              >
+                Send
+              </Text>
+              <Feather
+                style={{ marginLeft: 5 }}
+                name="send"
+                size={20}
+                color="white"
+              />
+            </View>
+          </TouchableOpacity>
+        </View>
       </View>
     </SafeAreaView>
   );

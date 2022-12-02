@@ -15,15 +15,19 @@ import {
 import Header from "../components/header";
 import { FontAwesome } from "@expo/vector-icons";
 import { auth } from "../firebaseConfig";
+import Loading from "../components/loading";
 
 export default function Home({ navigation }) {
   const [itemDATA, setItemDATA] = useState([]);
   const [refreshing, setRefreshing] = useState(false);
+  const [loading, setLoading] = useState();
 
   const getProducts = async () => {
+    setLoading(true);
     const res = await fetch("https://fakestoreapi.com/products");
     const json = await res.json();
     setItemDATA(json);
+    setLoading(false);
   };
 
   useEffect(() => {
@@ -99,6 +103,7 @@ export default function Home({ navigation }) {
 
   return (
     <SafeAreaView style={{ backgroundColor: "#f8f8f8", flex: 1 }}>
+      {loading && <Loading />}
       <Header currentUser={auth} navigation={navigation} />
 
       <View
