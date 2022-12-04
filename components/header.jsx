@@ -104,12 +104,13 @@ export default function Header({ navigation }) {
         }}
       >
         <AuthTextInput
+          onFocus={() => navigation.navigate("Search")}
           style={{
             marginVertical: 15,
             borderWidth: 1,
             backgroundColor: "white",
           }}
-          placeHolder="Username"
+          placeHolder="Search Something..."
           entypoIconName="magnifying-glass"
           secured={false}
         />

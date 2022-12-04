@@ -40,7 +40,7 @@ export default function App() {
           <Stack.Screen name="ViewItem" component={ViewItem} />
           <Stack.Screen name="User" component={User} />
           <Stack.Screen name="Chat" component={Chat}/>
-          <Stack.Screen name="Search" component={Search}/>
+          <Stack.Screen options={{headerShown: true, title: ""}} name="Search" component={Search}/>
 
           <Stack.Screen
             options={{

@@ -171,7 +171,9 @@ export default function User({ navigation, route }) {
               </Text>
             </TouchableOpacity>
           ) : (
-            <TouchableOpacity onPress={() => navigation.navigate("Chat")}>
+            <TouchableOpacity
+              onPress={() => navigation.navigate("Chat", { otherUser })}
+            >
               <Text
                 style={{
                   paddingHorizontal: 10,
