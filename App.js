@@ -13,6 +13,8 @@ import User from "./screens/user";
 import Toast from "react-native-toast-message";
 import PublicCHat from "./screens/publicChat";
 import Sell from "./screens/sell";
+import Chat from "./screens/chat";
+import Search from "./screens/search";
 
 export default function App() {
   const Stack = createStackNavigator();
@@ -37,6 +39,9 @@ export default function App() {
           <Stack.Screen name="Drawer" component={DrawerTab} />
           <Stack.Screen name="ViewItem" component={ViewItem} />
           <Stack.Screen name="User" component={User} />
+          <Stack.Screen name="Chat" component={Chat}/>
+          <Stack.Screen name="Search" component={Search}/>
+
           <Stack.Screen
             options={{
               headerShown: true,

@@ -23,7 +23,9 @@ import { Toast } from "react-native-toast-message/lib/src/Toast";
 
 import * as ImagePicker from "expo-image-picker";
 
-export default function User({ navigation }) {
+export default function User({ navigation, route }) {
+  const otherUser = route.params;
+
   const user = auth;
 
   const [currentUser, setCurrentUser] = useState();
@@ -107,7 +109,7 @@ export default function User({ navigation }) {
           {currentUser ? (
             <Image
               source={{
-                uri: currentUser.photoUrl,
+                uri: otherUser ? otherUser.photoUrl : currentUser.photoUrl,
               }}
               style={{
                 width: 130,
@@ -124,7 +126,11 @@ export default function User({ navigation }) {
       <View style={{ marginTop: 45 }}>
         <Text style={{ fontSize: 20, fontWeight: "bold", textAlign: "center" }}>
           {currentUser ? (
-            currentUser.firstName + " " + currentUser.lastName
+            otherUser ? (
+              otherUser.firstName + " " + otherUser.lastName
+            ) : (
+              currentUser.firstName + " " + currentUser.lastName
+            )
           ) : (
             <ActivityIndicator />
           )}
@@ -150,19 +156,37 @@ export default function User({ navigation }) {
               Message
             </Text>
           </TouchableOpacity> */}
-          <TouchableOpacity onPress={handleUploadProfile}>
-            <Text
-              style={{
-                borderWidth: 1,
-                paddingHorizontal: 10,
-                paddingVertical: 3,
-                borderRadius: 10,
-                marginTop: 5,
-              }}
-            >
-              Upload Profile <Feather name="upload" size={24} color="black" />
-            </Text>
-          </TouchableOpacity>
+          {!otherUser ? (
+            <TouchableOpacity onPress={handleUploadProfile}>
+              <Text
+                style={{
+                  borderWidth: 1,
+                  paddingHorizontal: 10,
+                  paddingVertical: 3,
+                  borderRadius: 10,
+                  marginTop: 5,
+                }}
+              >
+                Upload Profile <Feather name="upload" size={24} color="black" />
+              </Text>
+            </TouchableOpacity>
+          ) : (
+            <TouchableOpacity onPress={() => navigation.navigate("Chat")}>
+              <Text
+                style={{
+                  paddingHorizontal: 10,
+                  paddingVertical: 3,
+                  borderRadius: 10,
+                  marginTop: 5,
+                  backgroundColor: "#4FBCDD",
+                  color: "white",
+                  fontSize: 20,
+                }}
+              >
+                Message
+              </Text>
+            </TouchableOpacity>
+          )}
         </View>
       </View>
 
@@ -192,7 +216,15 @@ export default function User({ navigation }) {
                 marginLeft: 10,
               }}
             >
-              {currentUser ? currentUser.firstName : <ActivityIndicator />}
+              {currentUser ? (
+                otherUser ? (
+                  otherUser.firstName
+                ) : (
+                  currentUser.firstName
+                )
+              ) : (
+                <ActivityIndicator />
+              )}
             </Text>
           </View>
         </View>
@@ -215,33 +247,44 @@ export default function User({ navigation }) {
                 marginLeft: 10,
               }}
             >
-              {currentUser ? currentUser.lastName : <ActivityIndicator />}
+              {currentUser ? (
+                otherUser ? (
+                  otherUser.lastName
+                ) : (
+                  currentUser.lastName
+                )
+              ) : (
+                <ActivityIndicator />
+              )}
             </Text>
           </View>
         </View>
-        <View
-          style={{
-            flexDirection: "row",
-            justifyContent: "flex-start",
-            alignItems: "flex-end",
-            marginVertical: 10,
-          }}
-        >
-          <View style={{ width: 100 }}>
-            <Text style={{ fontSize: 15 }}>Email: </Text>
+        {!otherUser && (
+          <View
+            style={{
+              flexDirection: "row",
+              justifyContent: "flex-start",
+              alignItems: "flex-end",
+              marginVertical: 10,
+            }}
+          >
+            <View style={{ width: 100 }}>
+              <Text style={{ fontSize: 15 }}>Email: </Text>
+            </View>
+
+            <View style={{ width: 200 }}>
+              <Text
+                style={{
+                  borderBottomWidth: 1,
+                  borderColor: "#4FBCDD",
+                  marginLeft: 10,
+                }}
+              >
+                {currentUser ? user.currentUser.email : <ActivityIndicator />}
+              </Text>
+            </View>
           </View>
-          <View style={{ width: 200 }}>
-            <Text
-              style={{
-                borderBottomWidth: 1,
-                borderColor: "#4FBCDD",
-                marginLeft: 10,
-              }}
-            >
-              {currentUser ? user.currentUser.email : <ActivityIndicator />}
-            </Text>
-          </View>
-        </View>
+        )}
       </View>
       <View
         style={{
@@ -274,29 +317,31 @@ export default function User({ navigation }) {
             SAVE
           </Text>
         </Pressable> */}
-        <Pressable
-          style={{
-            marginVertical: 20,
-            justifyContent: "center",
-            alignItems: "center",
-          }}
-          onPress={handleSIgnOut}
-        >
-          <Text
+        {!otherUser && (
+          <Pressable
             style={{
-              textAlign: "center",
-              borderWidth: 1,
-              paddingHorizontal: 10,
-              fontSize: 20,
-              fontWeight: "bold",
-              color: "#4FBCDD",
-              borderColor: "#4FBCDD",
-              borderRadius: 5,
+              marginVertical: 20,
+              justifyContent: "center",
+              alignItems: "center",
             }}
+            onPress={handleSIgnOut}
           >
-            LOGOUT
-          </Text>
-        </Pressable>
+            <Text
+              style={{
+                textAlign: "center",
+                borderWidth: 1,
+                paddingHorizontal: 10,
+                fontSize: 20,
+                fontWeight: "bold",
+                color: "#4FBCDD",
+                borderColor: "#4FBCDD",
+                borderRadius: 5,
+              }}
+            >
+              LOGOUT
+            </Text>
+          </Pressable>
+        )}
       </View>
     </SafeAreaView>
   );

@@ -6,7 +6,7 @@ import {
   Image,
   ActivityIndicator,
 } from "react-native";
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useRef, useState } from "react";
 import { SafeAreaView } from "react-native-safe-area-context";
 import Header from "../components/header";
 import SelectDropdown from "react-native-select-dropdown";
@@ -43,6 +43,12 @@ export default function Sell({ navigation }) {
 
   const [currentUser, setCurrentUser] = useState();
   const [disable, setDisable] = useState(false);
+
+  const categoryRef = useRef();
+  const titleRef = useRef();
+  const bidTimeRef = useRef();
+  const priceRef = useRef();
+  const descriptionRef = useRef();
 
   const fetchUserData = () => {
     const q = query(userCol, where("id", "==", user.currentUser.uid));
@@ -117,13 +123,28 @@ export default function Sell({ navigation }) {
       addDoc(productRef, data)
         .then(() => {
           showSuccessToast("Your item is posted");
-          setDisable(false);
+          reset();
         })
         .catch((e) => {
           console.log(e);
           setDisable(false);
         });
     }
+  };
+
+  const reset = () => {
+    setDisable(false);
+    setCategory(undefined);
+    setTitle(undefined);
+    setBidTime(undefined);
+    setPrice(undefined);
+    setDescription(undefined);
+    setProductPhotoUrl(undefined);
+    categoryRef.current.reset();
+    titleRef.current.clear();
+    bidTimeRef.current.reset();
+    priceRef.current.clear();
+    descriptionRef.current.clear();
   };
 
   const showSuccessToast = (text) => {
@@ -143,8 +164,6 @@ export default function Sell({ navigation }) {
   useEffect(() => {
     fetchUserData();
   }, []);
-
-  console.log(disable);
 
   return (
     <SafeAreaView>
@@ -203,6 +222,7 @@ export default function Sell({ navigation }) {
             Category
           </Text>
           <SelectDropdown
+            ref={categoryRef}
             buttonStyle={{
               backgroundColor: "#4FBCDD",
               width: "90%",
@@ -241,6 +261,7 @@ export default function Sell({ navigation }) {
             What are you selling?
           </Text>
           <TextInput
+            ref={titleRef}
             onChangeText={(text) => setTitle(text)}
             style={{
               borderBottomWidth: 1,
@@ -268,6 +289,7 @@ export default function Sell({ navigation }) {
             Bid Time
           </Text>
           <SelectDropdown
+            ref={bidTimeRef}
             buttonStyle={{
               backgroundColor: "#4FBCDD",
               width: "90%",
@@ -314,6 +336,7 @@ export default function Sell({ navigation }) {
             Price (₱)
           </Text>
           <TextInput
+            ref={priceRef}
             keyboardType="numeric"
             onChangeText={(text) => setPrice(text)}
             style={{
@@ -342,6 +365,7 @@ export default function Sell({ navigation }) {
             Description
           </Text>
           <TextInput
+            ref={descriptionRef}
             onChangeText={(text) => setDescription(text)}
             style={{
               borderWidth: 1,

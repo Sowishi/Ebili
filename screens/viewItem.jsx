@@ -27,8 +27,9 @@ import {
   onSnapshot,
   collection,
 } from "firebase/firestore";
+import Loading from "../components/loading";
 
-export default function ViewItem({ route }) {
+export default function ViewItem({ route, navigation }) {
   const data = route.params;
   const [addCart, setAddCart] = useState(false);
   const [bid, setBid] = useState();
@@ -69,14 +70,16 @@ export default function ViewItem({ route }) {
   };
 
   const handleBid = () => {
-    if (parseInt(bid) < data.price) {
+    if (currentUser.docID === data.owner.docID) {
+      showErrorToast("You. cannot bid in your own item!");
+    } else if (parseInt(bid) < data.price) {
       showErrorToast("Your bid must be higher than the current price/bid");
-    } else if (currentUser.docID === data.owner.docID) {
-      showErrorToast("You're cannot bid in your own item!");
+    } else if (bid === undefined) {
+      showErrorToast("Your bid is empty!");
     } else {
       const productDoc = doc(db, "products", data.docID);
       updateDoc(productDoc, {
-        currentBidder: currentUser.firstName + "" + currentUser.lastName,
+        currentBidder: currentUser.firstName + " " + currentUser.lastName,
         bidAmount: parseInt(bid),
       }).then(() => {
         showSuccessToast("Your bid is place successfully!");
@@ -243,10 +246,20 @@ export default function ViewItem({ route }) {
                 justifyContent: "flex-start",
               }}
             >
-              <Image
-                source={{ uri: data.owner.photoUrl }}
-                style={{ width: 50, height: 50, borderRadius: 100 }}
-              />
+              {currentUser ? (
+                <Pressable
+                  disabled={data.owner.id === currentUser.id}
+                  onPress={() => navigation.navigate("User", data.owner)}
+                >
+                  <Image
+                    source={{ uri: data.owner.photoUrl }}
+                    style={{ width: 50, height: 50, borderRadius: 100 }}
+                  />
+                </Pressable>
+              ) : (
+                <Loading />
+              )}
+
               <Text style={{ marginLeft: 5 }}>
                 {data.owner.firstName + " " + data.owner.lastName}
               </Text>

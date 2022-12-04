@@ -1,5 +1,5 @@
-import { View, Text, Pressable, ImageBackground, BackHandler} from "react-native";
-import React, { useEffect, useState } from "react";
+import { View, Text, Pressable, ImageBackground, BackHandler, Keyboard} from "react-native";
+import React, { useEffect, useRef, useState } from "react";
 import { AntDesign } from "@expo/vector-icons";
 import AuthTextInput from "../components/AuthTextInput";
 import AuthButton from "../components/AuthButton";
@@ -13,6 +13,8 @@ export default function Login({ navigation }) {
   const [email, setEmail] = useState();
   const [pass, setPass] = useState();
   const [loading, setLoading] = useState(false);
+
+  const emailRef = useRef()
 
   useEffect(() => {
     onAuthStateChanged(auth, () => {
@@ -42,6 +44,7 @@ export default function Login({ navigation }) {
   };
 
   const handleSignIn = () => {
+    Keyboard.dismiss()
     handleError();
     const result = handleError();
 

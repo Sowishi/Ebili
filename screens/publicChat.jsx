@@ -47,11 +47,9 @@ export default function PublicCHat({ navigation }) {
     } else {
       const messagesRef = collection(db, "messages");
       addDoc(messagesRef, {
-        userUID: currentUser.id,
         createdAt: serverTimestamp(),
         text: text,
-        photoUrl: currentUser.photoUrl,
-        firstName: currentUser.firstName,
+        owner: currentUser,
       });
       textInputRef.current.clear();
       setText("");
@@ -97,7 +95,7 @@ export default function PublicCHat({ navigation }) {
   };
 
   const renderMessages = ({ item }) => {
-    const ownMessage = item.userUID === currentUser.id;
+    const ownMessage = item.owner.id === currentUser.id;
 
     return (
       <View
@@ -117,10 +115,14 @@ export default function PublicCHat({ navigation }) {
           }}
         >
           {!ownMessage && (
-            <Image
-              style={{ width: 30, height: 30, borderRadius: 100 }}
-              source={{ uri: item.photoUrl }}
-            />
+            <TouchableOpacity
+              onPress={() => navigation.navigate("User", item.owner)}
+            >
+              <Image
+                style={{ width: 30, height: 30, borderRadius: 100 }}
+                source={{ uri: item.owner.photoUrl }}
+              />
+            </TouchableOpacity>
           )}
 
           <View
@@ -131,7 +133,7 @@ export default function PublicCHat({ navigation }) {
           >
             {!ownMessage && (
               <Text style={{ marginLeft: 10, fontSize: 13, color: "gray" }}>
-                {item.firstName}
+                {item.owner.firstName}
               </Text>
             )}
 
@@ -156,6 +158,8 @@ export default function PublicCHat({ navigation }) {
     fetchUserData();
     fetchMessages();
   }, []);
+
+  console.log(messages);
 
   return (
     <SafeAreaView style={{ flex: 1, backgroundColor: "#f8f8f8" }}>
