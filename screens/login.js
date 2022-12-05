@@ -17,11 +17,7 @@ export default function Login({ navigation }) {
   const emailRef = useRef()
 
   useEffect(() => {
-    onAuthStateChanged(auth, () => {
-      if (auth.currentUser) {
-        navigation.replace("Drawer");
-      }
-    });
+
     const backHandler = BackHandler.addEventListener(
       "hardwareBackPress",
       () => true
@@ -75,7 +71,7 @@ export default function Login({ navigation }) {
     <View style={{ flex: 1 }}>
       {loading && <Loading />}
       <ImageBackground
-        source={require("../assets/shop.jpg")}
+        source={require("../assets/ebili.png")}
         style={{
           flex: 1,
         }}
@@ -122,7 +118,7 @@ export default function Login({ navigation }) {
             handlePress={() => navigation.navigate("Registration")}
             style={{ marginTop: 0 }}
           />
-          <Text style={{ color: "gray", marginVertical: 10 }}>
+          {/* <Text style={{ color: "gray", marginVertical: 10 }}>
             ---------------- login with ----------------
           </Text>
           <View
@@ -138,7 +134,7 @@ export default function Login({ navigation }) {
               <AntDesign name="google" size={50} color="#F3B605" />
             </Pressable>
             <AntDesign name="facebook-square" size={50} color="#4081EC" />
-          </View>
+          </View> */}
         </View>
       </View>
     </View>

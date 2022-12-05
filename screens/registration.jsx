@@ -93,7 +93,7 @@ export default function Registration({ navigation }) {
     <View style={{ flex: 1 }}>
       {loading && <Loading />}
       <ImageBackground
-        source={require("../assets/shop-2.webp")}
+        source={require("../assets/ebili.png")}
         style={{
           flex: 1,
         }}

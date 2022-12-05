@@ -42,9 +42,11 @@ export default function Header({ navigation }) {
   return (
     <View
       style={{
-        marginHorizontal: 10,
-        backgroundColor: "#f8f8f8",
-        paddingVertical: 10,
+        backgroundColor: "#4FBCDD",
+        padding: 10,
+        borderBottomLeftRadius: 60,
+        borderBottomRightRadius: 60,
+        marginBottom: 10,
       }}
     >
       <View
@@ -64,7 +66,9 @@ export default function Header({ navigation }) {
             onPress={() => navigation.openDrawer()}
           />
         </View>
-        <Text style={{ fontSize: 25, fontWeight: "bold" }}>E-BILI</Text>
+        <Text style={{ fontSize: 25, fontWeight: "bold", color: "white" }}>
+          E-BILI
+        </Text>
         <View
           style={{
             flexDirection: "row",
@@ -108,6 +112,7 @@ export default function Header({ navigation }) {
           style={{
             marginVertical: 15,
             borderWidth: 1,
+            borderColor: "white",
             backgroundColor: "white",
           }}
           placeHolder="Search Something..."

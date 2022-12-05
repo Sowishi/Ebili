@@ -57,7 +57,7 @@ export default function ViewItem({ route, navigation }) {
     setAddCart(false);
     Toast.show({
       type: "success",
-      text1: "You are the current bidder.",
+      text1: "You are the highest bidder.",
     });
   };
 
@@ -267,13 +267,13 @@ export default function ViewItem({ route, navigation }) {
           </View>
           <View style={{ marginVertical: 10 }}>
             <Text>
-              Current Bidder:{" "}
+              Highest Bidder:{" "}
               <Text style={{ fontWeight: "bold", color: "#4FBCDD" }}>
                 {data.currentBidder}
               </Text>
             </Text>
             <Text>
-              Amount:{" "}
+              Highest Bid:{" "}
               <Text style={{ fontWeight: "bold", color: "#4FBCDD" }}>
                 ₱{data.bidAmount}{" "}
               </Text>

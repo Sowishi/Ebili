@@ -29,7 +29,7 @@ export default function AuthTextInput({
       <Entypo
         name={entypoIconName}
         size={24}
-        color="black"
+        color="gray"
         style={{ marginLeft: 5 }}
       />
       <TextInput

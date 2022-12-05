@@ -1,6 +1,11 @@
 import { NavigationContainer } from "@react-navigation/native";
 import { createStackNavigator } from "@react-navigation/stack";
-import { createDrawerNavigator } from "@react-navigation/drawer";
+import {
+  createDrawerNavigator,
+  DrawerContentScrollView,
+  DrawerItem,
+  DrawerItemList,
+} from "@react-navigation/drawer";
 
 import Cart from "./screens/cart";
 import Home from "./screens/home";
@@ -15,17 +20,56 @@ import PublicCHat from "./screens/publicChat";
 import Sell from "./screens/sell";
 import Chat from "./screens/chat";
 import Search from "./screens/search";
+import { auth } from "./firebaseConfig";
 
 export default function App() {
   const Stack = createStackNavigator();
   const Drawer = createDrawerNavigator();
 
-  const DrawerTab = () => {
+  const handleSIgnOut = (props) => {
+    console.log(props);
+  };
+
+  function CustomDrawerContent(props) {
     return (
-      <Drawer.Navigator screenOptions={{ headerShown: false }}>
+      <DrawerContentScrollView {...props}>
+        <DrawerItemList {...props} />
+        {/* <DrawerItem label="Logout" onPress={() => handleSIgnOut()} /> */}
+      </DrawerContentScrollView>
+    );
+  }
+
+  const DrawerTab = ({ navigation }) => {
+    return (
+      <Drawer.Navigator
+        drawerContent={(props) => <CustomDrawerContent {...props} />}
+        screenOptions={{
+          headerShown: false,
+          drawerStyle: {
+            backgroundColor: "#4FBCDD",
+          },
+
+          drawerActiveTintColor: "white",
+          drawerInactiveTintColor: "white",
+          drawerActiveBackgroundColor: "gray",
+        }}
+      >
         <Drawer.Screen name="Home" component={Home} />
-        <Drawer.Screen name="PublicChat" component={PublicCHat} />
-        <Drawer.Screen name="Sell" component={Sell} />
+        <Drawer.Screen
+          options={{ title: "Public Chat" }}
+          name="PublicChat"
+          component={PublicCHat}
+        />
+        <Drawer.Screen
+          options={{ title: "Switch to selling" }}
+          name="Sell"
+          component={Sell}
+        />
+        <Drawer.Screen
+          options={{ title: "Settings" }}
+          name="User"
+          component={User}
+        />
       </Drawer.Navigator>
     );
   };
@@ -39,8 +83,12 @@ export default function App() {
           <Stack.Screen name="Drawer" component={DrawerTab} />
           <Stack.Screen name="ViewItem" component={ViewItem} />
           <Stack.Screen name="User" component={User} />
-          <Stack.Screen name="Chat" component={Chat}/>
-          <Stack.Screen options={{headerShown: true, title: ""}} name="Search" component={Search}/>
+          <Stack.Screen name="Chat" component={Chat} />
+          <Stack.Screen
+            options={{ headerShown: true, title: "" }}
+            name="Search"
+            component={Search}
+          />
 
           <Stack.Screen
             options={{

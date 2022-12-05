@@ -18,6 +18,20 @@ import { FontAwesome } from "@expo/vector-icons";
 import { auth, db } from "../firebaseConfig";
 import Loading from "../components/loading";
 import { collection, onSnapshot } from "firebase/firestore";
+import {
+  Lato_100Thin,
+  Lato_100Thin_Italic,
+  Lato_300Light,
+  Lato_300Light_Italic,
+  Lato_400Regular,
+  Lato_400Regular_Italic,
+  Lato_700Bold,
+  Lato_700Bold_Italic,
+  Lato_900Black,
+  Lato_900Black_Italic,
+} from "@expo-google-fonts/lato";
+
+import { useFonts } from "expo-font";
 
 export default function Home({ navigation }) {
   const [itemDATA, setItemDATA] = useState([]);
@@ -35,6 +49,20 @@ export default function Home({ navigation }) {
     });
   };
 
+  const [loaded] = useFonts({
+    Lato_100Thin,
+    Lato_100Thin_Italic,
+    Lato_300Light,
+    Lato_300Light_Italic,
+    Lato_400Regular,
+    Lato_400Regular_Italic,
+    Lato_700Bold,
+    Lato_700Bold_Italic,
+    Lato_900Black,
+    test: Lato_900Black_Italic,
+    Lato: require("../assets/fonts/Lato-Regular.ttf"),
+  });
+
   useEffect(() => {
     getProducts();
   }, []);
@@ -45,7 +73,7 @@ export default function Home({ navigation }) {
         <View
           style={{
             width: Dimensions.get("window").width * 0.47,
-            height: Dimensions.get("window").width * 0.6,
+            height: Dimensions.get("window").width * 0.7,
             backgroundColor: "white",
             borderRadius: 20,
             padding: 5,
@@ -65,16 +93,17 @@ export default function Home({ navigation }) {
             style={{
               justifyContent: "center",
               alignItems: "center",
+              flex: 2,
             }}
           >
             <Image
               source={{ uri: item.productPhotoUrl }}
               style={{ width: "80%", height: "80%", borderRadius: 10 }}
-              resizeMode="cover"
+              resizeMode="contain"
             />
           </View>
 
-          <View style={{ marginLeft: 10 }}>
+          <View style={{ marginLeft: 10, flex: 1 }}>
             <Text
               numberOfLines={1}
               style={{ fontSize: 15, fontWeight: "bold" }}
@@ -84,13 +113,14 @@ export default function Home({ navigation }) {
             <Text style={{ color: "#4FBCDD", marginVertical: 2 }}>
               ₱{item.price}
             </Text>
-            <View
-              style={{
-                flexDirection: "row",
-                justifyContent: "flex-start",
-                alignItems: "center",
-              }}
-            ></View>
+            <Text style={{ color: "gray", marginVertical: 2, fontSize: 10 }}>
+              Seller: {item.owner.firstName + " " + item.owner.lastName}
+            </Text>
+            {item.createdAt && (
+              <Text style={{ color: "gray", marginVertical: 2, fontSize: 10 }}>
+                listed on: {item.createdAt.toDate().toDateString()}
+              </Text>
+            )}
           </View>
         </View>
       </Pressable>
@@ -103,36 +133,48 @@ export default function Home({ navigation }) {
 
   return (
     <SafeAreaView style={{ backgroundColor: "#f8f8f8", flex: 1 }}>
-      {loading && <Loading />}
-      <Header currentUser={auth} navigation={navigation} />
+      {loaded && (
+        <>
+          <Header currentUser={auth} navigation={navigation} />
 
-      <View
-        style={{
-          alignItems: "center",
-          flexDirection: "row",
-          justifyContent: "space-between",
-          marginHorizontal: 20,
-          marginVertical: 10,
-        }}
-      >
-        <Text style={{ fontWeight: "bold", fontSize: 20 }}>Today's Pick</Text>
-        <TouchableOpacity
-          onPress={() => navigation.navigate("ViewAll", { itemDATA })}
-        >
-          <Text style={{ fontSize: 13, color: "gray" }}>View All</Text>
-        </TouchableOpacity>
-      </View>
+          <View
+            style={{
+              alignItems: "center",
+              flexDirection: "row",
+              justifyContent: "space-between",
+              marginHorizontal: 20,
+              marginVertical: 10,
+            }}
+          >
+            <Text
+              style={{
+                fontWeight: "bold",
+                fontSize: 25,
+                fontFamily: "Lato",
+              }}
+            >
+              Today's Pick
+            </Text>
 
-      <FlatList
-        refreshControl={
-          <RefreshControl refreshing={refreshing} onRefresh={onRefresh} />
-        }
-        data={itemDATA}
-        numColumns={2}
-        renderItem={renderItem}
-        keyExtractor={(item, index) => index}
-        initialNumToRender={10}
-      />
+            <TouchableOpacity
+              onPress={() => navigation.navigate("ViewAll", { itemDATA })}
+            >
+              <Text style={{ fontSize: 13, color: "gray" }}>View All</Text>
+            </TouchableOpacity>
+          </View>
+
+          <FlatList
+            refreshControl={
+              <RefreshControl refreshing={refreshing} onRefresh={onRefresh} />
+            }
+            data={itemDATA}
+            numColumns={2}
+            renderItem={renderItem}
+            keyExtractor={(item, index) => index}
+            initialNumToRender={10}
+          />
+        </>
+      )}
     </SafeAreaView>
   );
 }

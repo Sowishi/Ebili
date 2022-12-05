@@ -49,7 +49,7 @@ export default function Search({ navigation }) {
         <View
           style={{
             width: Dimensions.get("window").width * 0.47,
-            height: Dimensions.get("window").width * 0.6,
+            height: Dimensions.get("window").width * 0.7,
             backgroundColor: "white",
             borderRadius: 20,
             padding: 5,
@@ -69,16 +69,17 @@ export default function Search({ navigation }) {
             style={{
               justifyContent: "center",
               alignItems: "center",
+              flex: 2,
             }}
           >
             <Image
               source={{ uri: item.productPhotoUrl }}
               style={{ width: "80%", height: "80%", borderRadius: 10 }}
-              resizeMode="cover"
+              resizeMode="contain"
             />
           </View>
 
-          <View style={{ marginLeft: 10 }}>
+          <View style={{ marginLeft: 10, flex: 1 }}>
             <Text
               numberOfLines={1}
               style={{ fontSize: 15, fontWeight: "bold" }}
@@ -88,13 +89,12 @@ export default function Search({ navigation }) {
             <Text style={{ color: "#4FBCDD", marginVertical: 2 }}>
               ₱{item.price}
             </Text>
-            <View
-              style={{
-                flexDirection: "row",
-                justifyContent: "flex-start",
-                alignItems: "center",
-              }}
-            ></View>
+            <Text style={{ color: "gray", marginVertical: 2, fontSize: 10 }}>
+              Seller: {item.owner.firstName + " " + item.owner.lastName}
+            </Text>
+            <Text style={{ color: "gray", marginVertical: 2, fontSize: 10 }}>
+              listed on: {item.createdAt.toDate().toDateString()}
+            </Text>
           </View>
         </View>
       </Pressable>

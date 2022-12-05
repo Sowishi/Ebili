@@ -133,18 +133,29 @@ export default function Sell({ navigation }) {
   };
 
   const reset = () => {
-    setDisable(false);
-    setCategory(undefined);
-    setTitle(undefined);
-    setBidTime(undefined);
-    setPrice(undefined);
-    setDescription(undefined);
-    setProductPhotoUrl(undefined);
-    categoryRef.current.reset();
-    titleRef.current.clear();
-    bidTimeRef.current.reset();
-    priceRef.current.clear();
-    descriptionRef.current.clear();
+    if (
+      !(
+        categories === undefined ||
+        title === undefined ||
+        bidTime === undefined ||
+        price === undefined ||
+        description === undefined ||
+        productPhotoUrl === undefined
+      )
+    ) {
+      setDisable(false);
+      setCategory(undefined);
+      setTitle(undefined);
+      setBidTime(undefined);
+      setPrice(undefined);
+      setDescription(undefined);
+      setProductPhotoUrl(undefined);
+      categoryRef.current.reset();
+      titleRef.current.clear();
+      bidTimeRef.current.reset();
+      priceRef.current.clear();
+      descriptionRef.current.clear();
+    }
   };
 
   const showSuccessToast = (text) => {
