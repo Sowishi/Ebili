@@ -36,6 +36,8 @@ export default function Sell({ navigation }) {
 
   const [productPhotoUrl, setProductPhotoUrl] = useState();
   const [category, setCategory] = useState();
+  const [sellType, setSellType] = useState();
+
   const [title, setTitle] = useState();
   const [bidTime, setBidTime] = useState();
   const [price, setPrice] = useState();
@@ -96,10 +98,15 @@ export default function Sell({ navigation }) {
   const handleUploadItem = () => {
     setDisable(true);
 
-    if (
+    if (sellType === "bidding") {
+      if (bidTime === undefined) {
+        showErrorToast();
+        setDisable(false);
+      }
+    } else if (
       categories === undefined ||
+      sellType === undefined ||
       title === undefined ||
-      bidTime === undefined ||
       price === undefined ||
       description === undefined ||
       productPhotoUrl === undefined
@@ -109,6 +116,7 @@ export default function Sell({ navigation }) {
     } else {
       const data = {
         category: category,
+        sellType: sellType,
         title: title,
         bidTime: bidTime,
         price: price,
@@ -175,6 +183,8 @@ export default function Sell({ navigation }) {
   useEffect(() => {
     fetchUserData();
   }, []);
+
+  console.log(sellType);
 
   return (
     <SafeAreaView>
@@ -269,15 +279,26 @@ export default function Sell({ navigation }) {
               marginBottom: 3,
             }}
           >
-            What are you selling?
+            How do you want to sell it?
           </Text>
-          <TextInput
-            ref={titleRef}
-            onChangeText={(text) => setTitle(text)}
-            style={{
-              borderBottomWidth: 1,
-              borderBottomColor: "#4FBCDD",
+          <SelectDropdown
+            ref={categoryRef}
+            buttonStyle={{
+              backgroundColor: "#4FBCDD",
               width: "90%",
+              borderRadius: 10,
+              height: 40,
+            }}
+            buttonTextStyle={{ color: "white", fontWeight: "bold" }}
+            data={["retail", "bidding"]}
+            onSelect={(selectedItem, index) => {
+              setSellType(selectedItem);
+            }}
+            buttonTextAfterSelection={(selectedItem, index) => {
+              return selectedItem;
+            }}
+            rowTextForSelection={(item, index) => {
+              return item;
             }}
           />
         </View>
@@ -297,37 +318,68 @@ export default function Sell({ navigation }) {
               marginBottom: 3,
             }}
           >
-            Bid Time
+            What are you selling?
           </Text>
-          <SelectDropdown
-            ref={bidTimeRef}
-            buttonStyle={{
-              backgroundColor: "#4FBCDD",
+          <TextInput
+            ref={titleRef}
+            onChangeText={(text) => setTitle(text)}
+            style={{
+              borderBottomWidth: 1,
+              borderBottomColor: "#4FBCDD",
               width: "90%",
-              borderRadius: 10,
-              height: 40,
-            }}
-            buttonTextStyle={{ color: "white", fontWeight: "bold" }}
-            data={[
-              "1 min",
-              "5 min",
-              "10min",
-              "1 hour",
-              "5 hours",
-              "10 hours",
-              "1 day",
-            ]}
-            onSelect={(selectedItem, index) => {
-              setBidTime(selectedItem);
-            }}
-            buttonTextAfterSelection={(selectedItem, index) => {
-              return selectedItem;
-            }}
-            rowTextForSelection={(item, index) => {
-              return item;
             }}
           />
         </View>
+        {sellType === "bidding" && (
+          <View
+            style={{
+              justifyContent: "center",
+              alignItems: "center",
+              marginHorizontal: 10,
+              marginVertical: 10,
+            }}
+          >
+            <Text
+              style={{
+                alignSelf: "flex-start",
+                fontSize: 16,
+                color: "gray",
+                marginBottom: 3,
+              }}
+            >
+              Bid Time
+            </Text>
+            <SelectDropdown
+              ref={bidTimeRef}
+              buttonStyle={{
+                backgroundColor: "#4FBCDD",
+                width: "90%",
+                borderRadius: 10,
+                height: 40,
+              }}
+              buttonTextStyle={{ color: "white", fontWeight: "bold" }}
+              data={[
+                "1 min",
+                "5 min",
+                "10min",
+                "1 hour",
+                "5 hours",
+                "10 hours",
+                "1 day",
+              ]}
+              onSelect={(selectedItem, index) => {
+                setBidTime(selectedItem);
+              }}
+              buttonTextAfterSelection={(selectedItem, index) => {
+                return selectedItem;
+              }}
+              rowTextForSelection={(item, index) => {
+                return item;
+              }}
+            />
+          </View>
+        )}
+
         <View
           style={{
             justifyContent: "center",

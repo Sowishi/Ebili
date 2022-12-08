@@ -21,6 +21,7 @@ import Sell from "./screens/sell";
 import Chat from "./screens/chat";
 import Search from "./screens/search";
 import { auth } from "./firebaseConfig";
+import Reviews from "./screens/reviews";
 
 export default function App() {
   const Stack = createStackNavigator();
@@ -84,6 +85,12 @@ export default function App() {
           <Stack.Screen name="ViewItem" component={ViewItem} />
           <Stack.Screen name="User" component={User} />
           <Stack.Screen name="Chat" component={Chat} />
+          <Stack.Screen
+            options={{ headerShown: true, title: "Reviews" }}
+            name="Reviews"
+            component={Reviews}
+          />
+
           <Stack.Screen
             options={{ headerShown: true, title: "" }}
             name="Search"

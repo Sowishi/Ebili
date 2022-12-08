@@ -10,6 +10,8 @@ import Toast from "react-native-toast-message";
 import Loading from "../components/loading";
 
 export default function Login({ navigation }) {
+
+  const user = auth;
   const [email, setEmail] = useState();
   const [pass, setPass] = useState();
   const [loading, setLoading] = useState(false);
@@ -17,6 +19,12 @@ export default function Login({ navigation }) {
   const emailRef = useRef()
 
   useEffect(() => {
+
+    onAuthStateChanged(user, () => {
+      if(user){
+        navigation.navigate("Drawer")
+      }
+    })
 
     const backHandler = BackHandler.addEventListener(
       "hardwareBackPress",

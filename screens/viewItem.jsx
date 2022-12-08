@@ -9,6 +9,7 @@ import {
   Dimensions,
   Button,
   ScrollView,
+  TouchableOpacity,
 } from "react-native";
 import React, { useEffect } from "react";
 import { SafeAreaView } from "react-native-safe-area-context";
@@ -86,6 +87,8 @@ export default function ViewItem({ route, navigation }) {
       });
     }
   };
+
+  console.log(data);
 
   return (
     <SafeAreaView style={{ flex: 1 }}>
@@ -199,6 +202,7 @@ export default function ViewItem({ route, navigation }) {
         />
       </View>
       <ScrollView
+        contentContainerStyle={{ paddingBottom: 20 }}
         style={{
           position: "relative",
           backgroundColor: "white",
@@ -308,7 +312,37 @@ export default function ViewItem({ route, navigation }) {
               {data.description}
             </Text>
           </View>
+          <View
+            style={{
+              justifyContent: "center",
+              alignItems: "center",
+              marginTop: 20,
+            }}
+          >
+            <TouchableOpacity
+              onPress={() => navigation.navigate("Reviews", data)}
+              style={{
+                backgroundColor: "#F70000",
+                paddingHorizontal: 15,
+                paddingVertical: 5,
+                borderRadius: 5,
+              }}
+            >
+              <Text
+                style={{
+                  fontWeight: "bold",
+                  fontSize: 20,
+                  marginBottom: 5,
+                  fontSize: 15,
+                  color: "white",
+                }}
+              >
+                See all reviews
+              </Text>
+            </TouchableOpacity>
+          </View>
         </View>
+
         <Pressable
           onPress={() => setAddCart(true)}
           style={{
