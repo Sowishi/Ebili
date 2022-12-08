@@ -22,10 +22,16 @@ import Chat from "./screens/chat";
 import Search from "./screens/search";
 import { auth } from "./firebaseConfig";
 import Reviews from "./screens/reviews";
+import Checkout from "./screens/checkout";
+import OrderConfirmed from "./screens/orderConfirmed";
+import { createMaterialTopTabNavigator } from "@react-navigation/material-top-tabs";
+import OrderPending from "./screens/orderPending";
+import OrderCompleted from "./screens/orderCompleted";
 
 export default function App() {
   const Stack = createStackNavigator();
   const Drawer = createDrawerNavigator();
+  const Order = createMaterialTopTabNavigator();
 
   const handleSIgnOut = (props) => {
     console.log(props);
@@ -39,6 +45,15 @@ export default function App() {
       </DrawerContentScrollView>
     );
   }
+
+  const OrderTab = () => {
+    return (
+      <Order.Navigator>
+        <Order.Screen name="OrderPending" component={OrderPending} />
+        <Order.Screen name="OrderCompleted" component={OrderCompleted} />
+      </Order.Navigator>
+    );
+  };
 
   const DrawerTab = ({ navigation }) => {
     return (
@@ -71,6 +86,12 @@ export default function App() {
           name="User"
           component={User}
         />
+
+        <Drawer.Screen
+          options={{ title: "Orders", headerShown: true }}
+          name="OrderTab"
+          component={OrderTab}
+        />
       </Drawer.Navigator>
     );
   };
@@ -83,7 +104,10 @@ export default function App() {
           <Stack.Screen name="Registration" component={Registration} />
           <Stack.Screen name="Drawer" component={DrawerTab} />
           <Stack.Screen name="ViewItem" component={ViewItem} />
+
           <Stack.Screen name="User" component={User} />
+          <Stack.Screen name="OrderConfirmed" component={OrderConfirmed} />
+
           <Stack.Screen name="Chat" component={Chat} />
           <Stack.Screen
             options={{ headerShown: true, title: "Reviews" }}
@@ -95,6 +119,12 @@ export default function App() {
             options={{ headerShown: true, title: "" }}
             name="Search"
             component={Search}
+          />
+
+          <Stack.Screen
+            options={{ headerShown: true, title: "" }}
+            name="Checkout"
+            component={Checkout}
           />
 
           <Stack.Screen

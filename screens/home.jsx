@@ -110,9 +110,34 @@ export default function Home({ navigation }) {
             >
               {item.title}
             </Text>
-            <Text style={{ color: "#4FBCDD", marginVertical: 2 }}>
-              ₱{item.price}
-            </Text>
+            <View
+              style={{
+                flexDirection: "row",
+                justifyContent: "space-between",
+                alignItems: "center",
+              }}
+            >
+              <Text style={{ color: "#4FBCDD", marginVertical: 2 }}>
+                ₱{item.price}
+              </Text>
+              <View
+                style={{
+                  paddingRight: 5,
+                  borderRightWidth: 2,
+                  borderRightColor: "#4FBCDD",
+                  marginRight: 5,
+                }}
+              >
+                <Text
+                  style={{
+                    fontWeight: "bold",
+                  }}
+                >
+                  {item.sellType === "bidding" ? "Bidding" : "Retail"}
+                </Text>
+              </View>
+            </View>
+
             <Text style={{ color: "gray", marginVertical: 2, fontSize: 10 }}>
               Seller: {item.owner.firstName + " " + item.owner.lastName}
             </Text>

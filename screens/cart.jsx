@@ -1,56 +1,34 @@
-import { View, Text, FlatList, Image, Button, Pressable } from "react-native";
-import React, { useState } from "react";
+import {
+  View,
+  Text,
+  FlatList,
+  Image,
+  Button,
+  Pressable,
+  ActivityIndicator,
+  TouchableHighlight,
+} from "react-native";
+import React, { useEffect, useState } from "react";
 import { SafeAreaView } from "react-native-safe-area-context";
 import Checkbox from "expo-checkbox";
+import {
+  collection,
+  deleteDoc,
+  doc,
+  onSnapshot,
+  query,
+  where,
+} from "firebase/firestore";
+import { auth, db, userCol } from "../firebaseConfig";
+import Loading from "../components/loading";
+import { Toast } from "react-native-toast-message/lib/src/Toast";
 
-export default function Cart() {
+export default function Cart({ navigation, route }) {
+  const currentUser = route.params;
+
   const [selectAll, setSelectAll] = useState(false);
 
-  const [cart, setCart] = useState([
-    {
-      id: 1,
-      title: "Fjallraven - Foldsack No. 1 Backpack, Fits 15 Laptops",
-      price: 109.95,
-      description:
-        "Your perfect pack for everyday use and walks in the forest. Stash your laptop (up to 15 inches) in the padded sleeve, your everyday",
-      category: "men's clothing",
-      image: "https://fakestoreapi.com/img/81fPKd-2AYL._AC_SL1500_.jpg",
-      rating: {
-        rate: 3.9,
-        count: 120,
-      },
-      quantity: 1,
-    },
-    {
-      id: 2,
-      title: "Mens Casual Premium Slim Fit T-Shirts ",
-      price: 22.3,
-      description:
-        "Slim-fitting style, contrast raglan long sleeve, three-button henley placket, light weight & soft fabric for breathable and comfortable wearing. And Solid stitched shirts with round neck made for durability and a great fit for casual fashion wear and diehard baseball fans. The Henley style round neckline includes a three-button placket.",
-      category: "men's clothing",
-      image:
-        "https://fakestoreapi.com/img/71-3HjGNDUL._AC_SY879._SX._UX._SY._UY_.jpg",
-      rating: {
-        rate: 4.1,
-        count: 259,
-      },
-      quantity: 1,
-    },
-    {
-      id: 3,
-      title: "Mens Cotton Jacket",
-      price: 55.99,
-      description:
-        "great outerwear jackets for Spring/Autumn/Winter, suitable for many occasions, such as working, hiking, camping, mountain/rock climbing, cycling, traveling or other outdoors. Good gift choice for you or your family member. A warm hearted love to Father, husband or son in this thanksgiving or Christmas Day.",
-      category: "men's clothing",
-      image: "https://fakestoreapi.com/img/71li-ujtlUL._AC_UX679_.jpg",
-      rating: {
-        rate: 4.7,
-        count: 500,
-      },
-      quantity: 1,
-    },
-  ]);
+  const [cart, setCart] = useState();
 
   const handleIncreament = (item) => {
     const data = [...cart];
@@ -90,7 +68,7 @@ export default function Cart() {
     let total = 0;
     data.map((i) => {
       if (i.addedToCart) {
-        total += i.price * i.quantity;
+        total += i.product.price * i.quantity;
       }
     });
     return parseInt(total);
@@ -109,6 +87,30 @@ export default function Cart() {
     });
 
     setCart(newData);
+  };
+
+  const handleDelete = (item) => {
+    const itemDoc = doc(db, "carts", item.id);
+    deleteDoc(itemDoc).then(() => {
+      Toast.show({
+        type: "success",
+        text1: "Deleted Successfully",
+      });
+    });
+  };
+
+  const handleCheckout = () => {
+    if (toCheckout.length > 0) {
+      navigation.navigate("Checkout", {
+        toCheckout: toCheckout,
+        total: handleTotal(),
+      });
+    } else {
+      Toast.show({
+        type: "error",
+        text1: "Please select an item first",
+      });
+    }
   };
 
   const renderCarts = ({ item }) => {
@@ -138,97 +140,169 @@ export default function Cart() {
               color={item.addedToCart ? "#4FBCDD" : undefined}
             />
             <Image
-              source={{ uri: item.image }}
+              source={{ uri: item.product.productPhotoUrl }}
               style={{ width: 70, height: 70, marginHorizontal: 5 }}
               resizeMode="contain"
             />
             <View style={{ width: "50%", marginHorizontal: 5 }}>
-              <Text numberOfLines={2}>{item.title}</Text>
+              <Text numberOfLines={2}>{item.product.title}</Text>
               <Text style={{ color: "#4FBCDD", fontWeight: "bold" }}>
-                ₱{item.price}
+                ₱{item.product.price}
               </Text>
             </View>
           </View>
 
-          <View style={{ flexDirection: "row", justifyContent: "flex-end" }}>
-            <Button
-              color={"#4FBCDD"}
-              title="-"
-              disabled={item.quantity === 1 ? true : false}
-              onPress={() => handleDecrement(item)}
-            ></Button>
-            <Text
+          <View
+            style={{
+              flexDirection: "row",
+              justifyContent: "space-between",
+              alignItems: "center",
+              marginVertical: 5,
+            }}
+          >
+            <View
               style={{
-                paddingHorizontal: 10,
-                fontSize: 20,
-                fontWeight: "bold",
+                justifyContent: "center",
+                alignItems: "flex-start",
+                padding: 5,
               }}
             >
-              {item.quantity}
-            </Text>
-            <Button
-              color={"#4FBCDD"}
-              onPress={() => handleIncreament(item)}
-              title="+"
-            ></Button>
+              <TouchableHighlight
+                onPress={() => handleDelete(item)}
+                style={{
+                  backgroundColor: "#4FBCDD",
+                  padding: 5,
+                  borderRadius: 5,
+                }}
+              >
+                <Text style={{ color: "white" }}>Remove</Text>
+              </TouchableHighlight>
+            </View>
+            <View style={{ flexDirection: "row", justifyContent: "flex-end" }}>
+              <Button
+                color={"#4FBCDD"}
+                title="-"
+                disabled={item.quantity === 1 ? true : false}
+                onPress={() => handleDecrement(item)}
+              ></Button>
+              <Text
+                style={{
+                  paddingHorizontal: 10,
+                  fontSize: 20,
+                  fontWeight: "bold",
+                }}
+              >
+                {item.quantity}
+              </Text>
+              <Button
+                color={"#4FBCDD"}
+                onPress={() => handleIncreament(item)}
+                title="+"
+              ></Button>
+            </View>
           </View>
         </View>
       </View>
     );
   };
 
+  const fetchCarts = () => {
+    const cartsRef = collection(db, "carts");
+    onSnapshot(cartsRef, (snapshot) => {
+      const carts = [];
+      snapshot.docs.forEach((doc) => {
+        carts.push({ ...doc.data(), id: doc.id });
+      });
+      const filteredCarts = carts.filter((i) => {
+        if (i.owner.id === currentUser.id) {
+          return i;
+        }
+      });
+      setCart(filteredCarts);
+    });
+  };
+
+  useEffect(() => {
+    fetchCarts();
+  }, []);
+
+  if (cart === undefined || cart.length === 0) {
+    return (
+      <View
+        style={{ flex: 1, justifyContent: "flex-start", alignItems: "center" }}
+      >
+        <Text style={{ fontSize: 25, color: "gray", marginTop: 30 }}>
+          Your cart is empty
+        </Text>
+      </View>
+    );
+  }
+
+  const toCheckout = cart.filter((i) => {
+    if (i.addedToCart) {
+      return i;
+    }
+  });
+
   return (
     <SafeAreaView style={{ flex: 1 }}>
-      <FlatList
-        data={cart}
-        renderItem={renderCarts}
-        keyExtractor={(item, index) => index}
-      />
-      <View
-        style={{
-          backgroundColor: "white",
-          width: "100%",
-          height: 50,
-          position: "absolute",
-          bottom: 0,
-          left: 0,
-          justifyContent: "space-between",
-          alignItems: "center",
-          flexDirection: "row",
-          paddingHorizontal: 10,
-        }}
-      >
-        <View
-          style={{
-            flexDirection: "row",
-            alignItems: "center",
-            justifyContent: "center",
-          }}
-        >
-          <Text style={{ marginRight: 5 }}>Select All</Text>
-          <Checkbox
-            value={selectAll}
-            onValueChange={handleSelectAll}
-            color={selectAll ? "#4FBCDD" : undefined}
+      {cart && (
+        <>
+          <FlatList
+            style={{ marginBottom: 30 }}
+            data={cart}
+            renderItem={renderCarts}
+            keyExtractor={(item, index) => index}
           />
-          <Text style={{ marginHorizontal: 10 }}>
-            Total: <Text style={{ color: "#E6141C" }}>₱{handleTotal()}</Text>
-          </Text>
-        </View>
 
-        <Pressable>
           <View
             style={{
-              backgroundColor: "#E6141C",
+              backgroundColor: "white",
+              width: "100%",
+              height: 50,
+              position: "absolute",
+              bottom: 0,
+              left: 0,
+              justifyContent: "space-between",
+              alignItems: "center",
+              flexDirection: "row",
               paddingHorizontal: 10,
-              paddingVertical: 5,
-              borderRadius: 5,
             }}
           >
-            <Text style={{ color: "white" }}>Checkout</Text>
+            <View
+              style={{
+                flexDirection: "row",
+                alignItems: "center",
+                justifyContent: "center",
+              }}
+            >
+              <Text style={{ marginRight: 5 }}>Select All</Text>
+              <Checkbox
+                value={selectAll}
+                onValueChange={handleSelectAll}
+                color={selectAll ? "#4FBCDD" : undefined}
+              />
+              <Text style={{ marginHorizontal: 10 }}>
+                Total:{" "}
+                <Text style={{ color: "#E6141C" }}>₱{handleTotal()}</Text>
+              </Text>
+            </View>
+
+            <Pressable onPress={handleCheckout}>
+              <View
+                style={{
+                  backgroundColor: "#E6141C",
+                  paddingHorizontal: 10,
+                  paddingVertical: 5,
+                  borderRadius: 5,
+                }}
+              >
+                <Text style={{ color: "white" }}>Checkout</Text>
+              </View>
+            </Pressable>
           </View>
-        </Pressable>
-      </View>
+        </>
+      )}
     </SafeAreaView>
   );
 }

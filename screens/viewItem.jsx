@@ -27,6 +27,7 @@ import {
   doc,
   onSnapshot,
   collection,
+  addDoc,
 } from "firebase/firestore";
 import Loading from "../components/loading";
 
@@ -34,6 +35,7 @@ export default function ViewItem({ route, navigation }) {
   const data = route.params;
   const [addCart, setAddCart] = useState(false);
   const [bid, setBid] = useState();
+  const [quantity, setQuantity] = useState(1);
 
   const user = auth;
   const [currentUser, setCurrentUser] = useState();
@@ -54,11 +56,11 @@ export default function ViewItem({ route, navigation }) {
     fetchUserData();
   }, []);
 
-  const showSuccessToast = () => {
+  const showSuccessToast = (text) => {
     setAddCart(false);
     Toast.show({
       type: "success",
-      text1: "You are the highest bidder.",
+      text1: text,
     });
   };
 
@@ -88,7 +90,18 @@ export default function ViewItem({ route, navigation }) {
     }
   };
 
-  console.log(data);
+  const handleRetail = () => {
+    const output = {
+      quantity: quantity,
+      product: data,
+      owner: currentUser,
+    };
+
+    const cartsRef = collection(db, "carts");
+    addDoc(cartsRef, output).then(() => {
+      showSuccessToast("Added to cart!");
+    });
+  };
 
   return (
     <SafeAreaView style={{ flex: 1 }}>
@@ -135,55 +148,125 @@ export default function ViewItem({ route, navigation }) {
                 </Text>
               </View>
             </View>
-            <View
-              style={{
-                margin: 40,
-                flexDirection: "row",
-                justifyContent: "space-between",
-                alignItems: "center",
-              }}
-            >
-              <Text style={{ fontSize: 20 }}>Amount</Text>
-              <TextInput
-                keyboardType="numeric"
-                onChangeText={(text) => setBid(text)}
+            {data.sellType === "bidding" ? (
+              <View
                 style={{
-                  borderBottomWidth: 1,
-                  width: "50%",
-                  borderColor: "#4FBCDD",
-                  marginLeft: 10,
-                }}
-              />
-            </View>
-            <View
-              style={{
-                flex: 1,
-                justifyContent: "flex-end",
-                alignItems: "center",
-                marginBottom: 10,
-              }}
-            >
-              <Pressable
-                onPress={handleBid}
-                style={{
-                  backgroundColor: "#46B950",
-                  width: "90%",
-                  paddingVertical: 15,
-                  borderRadius: 10,
+                  margin: 40,
+                  flexDirection: "row",
+                  justifyContent: "space-between",
+                  alignItems: "center",
                 }}
               >
-                <Text
+                <Text style={{ fontSize: 20 }}>Amount</Text>
+                <TextInput
+                  keyboardType="numeric"
+                  onChangeText={(text) => setBid(text)}
                   style={{
-                    color: "white",
-                    fontSize: 15,
-                    fontWeight: "bold",
-                    textAlign: "center",
+                    borderBottomWidth: 1,
+                    width: "50%",
+                    borderColor: "#4FBCDD",
+                    marginLeft: 10,
+                  }}
+                />
+              </View>
+            ) : (
+              <View
+                style={{
+                  flexDirection: "row",
+                  justifyContent: "space-around",
+                  alignItems: "center",
+                }}
+              >
+                <Text style={{ fontSize: 20 }}>Quantity</Text>
+
+                <View
+                  style={{ flexDirection: "row", justifyContent: "flex-end" }}
+                >
+                  <Button
+                    color={"#4FBCDD"}
+                    title="-"
+                    disabled={quantity === 1 ? true : false}
+                    onPress={() => setQuantity(quantity - 1)}
+                  ></Button>
+                  <Text
+                    style={{
+                      paddingHorizontal: 10,
+                      fontSize: 20,
+                      fontWeight: "bold",
+                    }}
+                  >
+                    {quantity}
+                  </Text>
+                  <Button
+                    color={"#4FBCDD"}
+                    onPress={() => setQuantity(quantity + 1)}
+                    title="+"
+                  ></Button>
+                </View>
+              </View>
+            )}
+
+            {data.sellType === "bidding" ? (
+              <View
+                style={{
+                  flex: 1,
+                  justifyContent: "flex-end",
+                  alignItems: "center",
+                  marginBottom: 10,
+                }}
+              >
+                <Pressable
+                  onPress={handleBid}
+                  style={{
+                    backgroundColor: "#46B950",
+                    width: "90%",
+                    paddingVertical: 15,
+                    borderRadius: 10,
                   }}
                 >
-                  BID{" "}
-                </Text>
-              </Pressable>
-            </View>
+                  <Text
+                    style={{
+                      color: "white",
+                      fontSize: 15,
+                      fontWeight: "bold",
+                      textAlign: "center",
+                    }}
+                  >
+                    BID{" "}
+                  </Text>
+                </Pressable>
+              </View>
+            ) : (
+              <View
+                style={{
+                  flex: 1,
+                  justifyContent: "flex-end",
+                  alignItems: "center",
+                  marginBottom: 10,
+                }}
+              >
+                <Pressable
+                  onPress={handleRetail}
+                  style={{
+                    backgroundColor: "#46B950",
+                    width: "90%",
+                    paddingVertical: 15,
+                    borderRadius: 10,
+                  }}
+                >
+                  <Text
+                    style={{
+                      color: "white",
+                      fontSize: 15,
+                      fontWeight: "bold",
+                      textAlign: "center",
+                    }}
+                  >
+                    ADD TO CART
+                  </Text>
+                </Pressable>
+              </View>
+            )}
           </View>
         </View>
       </Modal>
@@ -269,34 +352,37 @@ export default function ViewItem({ route, navigation }) {
               </Text>
             </View>
           </View>
-          <View style={{ marginVertical: 10 }}>
-            <Text>
-              Highest Bidder:{" "}
-              <Text style={{ fontWeight: "bold", color: "#4FBCDD" }}>
-                {data.currentBidder}
-              </Text>
-            </Text>
-            <Text>
-              Highest Bid:{" "}
-              <Text style={{ fontWeight: "bold", color: "#4FBCDD" }}>
-                ₱{data.bidAmount}{" "}
-              </Text>
-            </Text>
-            <Text>
-              Listed on:{" "}
-              {data && (
+          {data.sellType === "bidding" && (
+            <View style={{ marginVertical: 10 }}>
+              <Text>
+                Highest Bidder:{" "}
                 <Text style={{ fontWeight: "bold", color: "#4FBCDD" }}>
-                  {data.createdAt.toDate().toDateString()}
+                  {data.currentBidder}
                 </Text>
-              )}
-            </Text>
-            <Text>
-              Bidding ends in:{" "}
-              <Text style={{ fontWeight: "bold", color: "#4FBCDD" }}>
-                {data.bidTime}{" "}
               </Text>
-            </Text>
-          </View>
+              <Text>
+                Highest Bid:{" "}
+                <Text style={{ fontWeight: "bold", color: "#4FBCDD" }}>
+                  ₱{data.bidAmount}{" "}
+                </Text>
+              </Text>
+              <Text>
+                Listed on:{" "}
+                {data && (
+                  <Text style={{ fontWeight: "bold", color: "#4FBCDD" }}>
+                    {data.createdAt.toDate().toDateString()}
+                  </Text>
+                )}
+              </Text>
+              <Text>
+                Bidding ends in:{" "}
+                <Text style={{ fontWeight: "bold", color: "#4FBCDD" }}>
+                  {data.bidTime}{" "}
+                </Text>
+              </Text>
+            </View>
+          )}
+
           <View>
             <Text
               style={{

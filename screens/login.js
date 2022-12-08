@@ -20,11 +20,11 @@ export default function Login({ navigation }) {
 
   useEffect(() => {
 
-    onAuthStateChanged(user, () => {
-      if(user){
-        navigation.navigate("Drawer")
-      }
-    })
+    // onAuthStateChanged(user, () => {
+    //   if(user){
+    //     navigation.navigate("Drawer")
+    //   }
+    // })
 
     const backHandler = BackHandler.addEventListener(
       "hardwareBackPress",

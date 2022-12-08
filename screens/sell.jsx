@@ -47,6 +47,7 @@ export default function Sell({ navigation }) {
   const [disable, setDisable] = useState(false);
 
   const categoryRef = useRef();
+  const sellTypeRef = useRef();
   const titleRef = useRef();
   const bidTimeRef = useRef();
   const priceRef = useRef();
@@ -75,7 +76,6 @@ export default function Sell({ navigation }) {
   const handleUploadPhoto = async () => {
     let result = await ImagePicker.launchImageLibraryAsync({
       mediaTypes: ImagePicker.MediaTypeOptions.All,
-      allowsEditing: true,
       quality: 1,
     });
 
@@ -98,23 +98,28 @@ export default function Sell({ navigation }) {
   const handleUploadItem = () => {
     setDisable(true);
 
-    if (sellType === "bidding") {
-      if (bidTime === undefined) {
-        showErrorToast();
-        setDisable(false);
-      }
-    } else if (
+    const biddingCondition =
       categories === undefined ||
       sellType === undefined ||
       title === undefined ||
       price === undefined ||
       description === undefined ||
-      productPhotoUrl === undefined
-    ) {
+      productPhotoUrl === undefined ||
+      bidTime === undefined;
+
+    const retailCondition =
+      categories === undefined ||
+      sellType === undefined ||
+      title === undefined ||
+      price === undefined ||
+      description === undefined ||
+      productPhotoUrl === undefined;
+
+    if (sellType === "bidding" ? biddingCondition : retailCondition) {
       showErrorToast();
       setDisable(false);
     } else {
-      const data = {
+      const biddingData = {
         category: category,
         sellType: sellType,
         title: title,
@@ -127,43 +132,50 @@ export default function Sell({ navigation }) {
         currentBidder: "None",
         bidAmount: 0,
       };
+
+      const retailData = {
+        category: category,
+        sellType: sellType,
+        title: title,
+        price: price,
+        description: description,
+        productPhotoUrl: productPhotoUrl,
+        createdAt: serverTimestamp(),
+        owner: currentUser,
+      };
+
       const productRef = collection(db, "products");
-      addDoc(productRef, data)
+      addDoc(productRef, sellType === "bidding" ? biddingData : retailData)
         .then(() => {
           showSuccessToast("Your item is posted");
-          reset();
+          setDisable(false);
+          setProductPhotoUrl(undefined);
+
+          // reset();
         })
         .catch((e) => {
-          console.log(e);
           setDisable(false);
         });
     }
   };
 
   const reset = () => {
-    if (
-      !(
-        categories === undefined ||
-        title === undefined ||
-        bidTime === undefined ||
-        price === undefined ||
-        description === undefined ||
-        productPhotoUrl === undefined
-      )
-    ) {
-      setDisable(false);
-      setCategory(undefined);
-      setTitle(undefined);
-      setBidTime(undefined);
-      setPrice(undefined);
-      setDescription(undefined);
-      setProductPhotoUrl(undefined);
-      categoryRef.current.reset();
-      titleRef.current.clear();
-      bidTimeRef.current.reset();
-      priceRef.current.clear();
-      descriptionRef.current.clear();
-    }
+    categoryRef.current.reset();
+    sellTypeRef.current.reset();
+
+    titleRef.current.clear();
+    bidTimeRef.current.reset();
+    priceRef.current.clear();
+    descriptionRef.current.clear();
+
+    setDisable(false);
+    setCategory(undefined);
+    setSellType(undefined);
+    setTitle(undefined);
+    setBidTime(undefined);
+    setPrice(undefined);
+    setDescription(undefined);
+    setProductPhotoUrl(undefined);
   };
 
   const showSuccessToast = (text) => {
@@ -183,8 +195,6 @@ export default function Sell({ navigation }) {
   useEffect(() => {
     fetchUserData();
   }, []);
-
-  console.log(sellType);
 
   return (
     <SafeAreaView>
@@ -243,7 +253,7 @@ export default function Sell({ navigation }) {
             Category
           </Text>
           <SelectDropdown
-            ref={categoryRef}
+            ref={sellTypeRef}
             buttonStyle={{
               backgroundColor: "#4FBCDD",
               width: "90%",
@@ -282,7 +292,7 @@ export default function Sell({ navigation }) {
             How do you want to sell it?
           </Text>
           <SelectDropdown
-            ref={categoryRef}
+            ref={sellTypeRef}
             buttonStyle={{
               backgroundColor: "#4FBCDD",
               width: "90%",
@@ -359,13 +369,13 @@ export default function Sell({ navigation }) {
               }}
               buttonTextStyle={{ color: "white", fontWeight: "bold" }}
               data={[
-                "1 min",
-                "5 min",
-                "10min",
                 "1 hour",
                 "5 hours",
-                "10 hours",
+                "6 hours",
+                "12 hours",
                 "1 day",
+                "5 days",
+                "1 week",
               ]}
               onSelect={(selectedItem, index) => {
                 setBidTime(selectedItem);

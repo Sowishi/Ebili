@@ -76,7 +76,9 @@ export default function Header({ navigation }) {
             justifyContent: "center",
           }}
         >
-          <TouchableOpacity onPress={() => navigation.navigate("Cart")}>
+          <TouchableOpacity
+            onPress={() => navigation.navigate("Cart", currentUser)}
+          >
             <View
               style={{
                 backgroundColor: "white",
