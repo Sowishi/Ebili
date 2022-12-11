@@ -12,10 +12,10 @@
     "slug": "ebili",
     "version": "1.0.0",
     "orientation": "portrait",
-    "icon": "./assets/ebili.png",
+    "icon": "./assets/ebili-logo.jpg",
     "userInterfaceStyle": "light",
     "splash": {
-      "image": "./assets/ebili.png",
+      "image": "./assets/ebili-logo.jpg",
       "resizeMode": "contain",
       "backgroundColor": "#04B79F"
     },
@@ -30,7 +30,7 @@
     },
     "android": {
       "adaptiveIcon": {
-        "foregroundImage": "./assets/ebili.png",
+        "foregroundImage": "./assets/ebili-logo.jpg",
         "backgroundColor": "#FFFFFF"
       },
       "package": "com.sowishi.ebili"
