@@ -119,7 +119,7 @@ export default function PublicCHat({ navigation }) {
               onPress={() => navigation.navigate("User", item.owner)}
             >
               <Image
-                style={{ width: 30, height: 30, borderRadius: 100 }}
+                style={{ width: 20, height: 20, borderRadius: 100 }}
                 source={{ uri: item.owner.photoUrl }}
               />
             </TouchableOpacity>
@@ -132,21 +132,25 @@ export default function PublicCHat({ navigation }) {
             }}
           >
             {!ownMessage && (
-              <Text style={{ marginLeft: 10, fontSize: 13, color: "gray" }}>
+              <Text style={{ marginLeft: 10, fontSize: 11, color: "gray" }}>
                 {item.owner.firstName}
               </Text>
             )}
 
             <View
               style={{
-                backgroundColor: ownMessage ? "#4FBCDD" : "gray",
-                paddingHorizontal: 5,
+                backgroundColor: ownMessage ? "#0096be" : "#EFB701",
+                paddingHorizontal: 10,
                 paddingVertical: 3,
                 borderRadius: 10,
                 marginHorizontal: 10,
               }}
             >
-              <Text style={{ fontSize: 20, color: "white" }}>{item.text}</Text>
+              <Text
+                style={{ fontSize: 11, color: ownMessage ? "white" : "black" }}
+              >
+                {item.text}
+              </Text>
             </View>
           </View>
         </View>
@@ -158,8 +162,6 @@ export default function PublicCHat({ navigation }) {
     fetchUserData();
     fetchMessages();
   }, []);
-
-  console.log(messages);
 
   return (
     <SafeAreaView style={{ flex: 1, backgroundColor: "#f8f8f8" }}>
@@ -178,7 +180,7 @@ export default function PublicCHat({ navigation }) {
             />
           </View>
         ) : (
-          <ActivityIndicator />
+          <Loading />
         )}
 
         <View
@@ -199,7 +201,7 @@ export default function PublicCHat({ navigation }) {
           <TouchableOpacity
             style={{
               marginLeft: 10,
-              backgroundColor: "#4FBCDD",
+              backgroundColor: "#0096be",
               paddingHorizontal: 10,
               borderRadius: 5,
             }}
@@ -210,19 +212,11 @@ export default function PublicCHat({ navigation }) {
                 flexDirection: "row",
                 justifyContent: "center",
                 alignItems: "center",
+                paddingHorizontal: 13,
+                paddingVertical: 5,
               }}
             >
-              <Text
-                style={{ fontSize: 20, fontWeight: "bold", color: "white" }}
-              >
-                Send
-              </Text>
-              <Feather
-                style={{ marginLeft: 5 }}
-                name="send"
-                size={20}
-                color="white"
-              />
+              <Feather name="send" size={20} color="white" />
             </View>
           </TouchableOpacity>
         </View>

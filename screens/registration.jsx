@@ -93,7 +93,7 @@ export default function Registration({ navigation }) {
     <View style={{ flex: 1 }}>
       {loading && <Loading />}
       <ImageBackground
-        source={require("../assets/ebili.png")}
+        source={require("../assets/ebili-cover.png")}
         style={{
           flex: 1,
         }}
@@ -105,34 +105,32 @@ export default function Registration({ navigation }) {
           style={{
             textAlign: "center",
             marginVertical: 10,
-            fontSize: 30,
+            fontSize: 20,
             fontWeight: "bold",
+            marginBottom: 20,
           }}
         >
-          Register
+          CREATE YOUR ACCOUNT
         </Text>
         <View style={{ alignItems: "center" }}>
-          <View style={{ flexDirection: "row" }}>
-            <AuthTextInput
-              style={{
-                width: Dimensions.get("screen").width * 0.45,
-                paddingHorizontal: 0,
-                marginHorizontal: 10,
-              }}
-              placeHolder="First name"
-              secured={false}
-              onChange={(text) => setFirstName(text)}
-            />
-            <AuthTextInput
-              style={{
-                width: Dimensions.get("screen").width * 0.45,
-                paddingHorizontal: 0,
-              }}
-              placeHolder="Last name"
-              secured={false}
-              onChange={(text) => setLastName(text)}
-            />
-          </View>
+          <AuthTextInput
+            style={{
+              marginTop: 15,
+            }}
+            entypoIconName="user"
+            placeHolder="First name"
+            secured={false}
+            onChange={(text) => setFirstName(text)}
+          />
+          <AuthTextInput
+            entypoIconName="user"
+            style={{
+              marginTop: 15,
+            }}
+            placeHolder="Last name"
+            secured={false}
+            onChange={(text) => setLastName(text)}
+          />
           <AuthTextInput
             onChange={(text) => setEmail(text)}
             style={{ marginTop: 15 }}
@@ -155,12 +153,16 @@ export default function Registration({ navigation }) {
             secured={true}
           />
           <Pressable onPress={() => navigation.navigate("Login")}>
-            <Text style={{ color: "#FF7C7E", fontSize: 15, marginTop: 10 }}>
+            <Text style={{ color: "gray", fontSize: 15, marginTop: 10 }}>
               Already have an account?
             </Text>
           </Pressable>
 
-          <AuthButton text="SIGN UP" handlePress={handleSignUp} />
+          <AuthButton
+            style={{ backgroundColor: "#4FBCDD" }}
+            text="SIGN UP"
+            handlePress={handleSignUp}
+          />
         </View>
       </View>
     </View>

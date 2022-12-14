@@ -44,8 +44,8 @@ export default function Header({ navigation }) {
       style={{
         backgroundColor: "#4FBCDD",
         padding: 10,
-        borderBottomLeftRadius: 60,
-        borderBottomRightRadius: 60,
+        // borderBottomLeftRadius: 60,
+        // borderBottomRightRadius: 60,
         marginBottom: 10,
       }}
     >
@@ -66,9 +66,19 @@ export default function Header({ navigation }) {
             onPress={() => navigation.openDrawer()}
           />
         </View>
-        <Text style={{ fontSize: 25, fontWeight: "bold", color: "white" }}>
-          E-BILI
-        </Text>
+        <AuthTextInput
+          onFocus={() => navigation.navigate("Search")}
+          style={{
+            marginVertical: 15,
+            borderWidth: 1,
+            borderColor: "white",
+            backgroundColor: "white",
+            width: "60%",
+          }}
+          placeHolder="Search Something..."
+          entypoIconName="magnifying-glass"
+          secured={false}
+        />
         <View
           style={{
             flexDirection: "row",
@@ -102,26 +112,13 @@ export default function Header({ navigation }) {
           </TouchableOpacity>
         </View>
       </View>
-      <View
+      {/* <View
         style={{
           flexDirection: "row",
           alignItems: "center",
           justifyContent: "center",
         }}
-      >
-        <AuthTextInput
-          onFocus={() => navigation.navigate("Search")}
-          style={{
-            marginVertical: 15,
-            borderWidth: 1,
-            borderColor: "white",
-            backgroundColor: "white",
-          }}
-          placeHolder="Search Something..."
-          entypoIconName="magnifying-glass"
-          secured={false}
-        />
-      </View>
+      ></View> */}
     </View>
   );
 }

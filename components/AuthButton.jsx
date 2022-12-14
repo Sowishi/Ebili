@@ -16,11 +16,10 @@ export default function AuthButton({
       style={[
         {
           marginTop: 20,
-          backgroundColor: "#FE3E3F",
           paddingVertical: 10,
           paddingHorizontal: 80,
           borderRadius: 20,
-          flexDirection: "row",
+          justifyContent: "center",
           alignItems: "center",
         },
         { ...style },
@@ -34,7 +33,17 @@ export default function AuthButton({
           color={iconColor}
         />
       )}
-      <Text style={{ color: "white" }}>{text}</Text>
+      <Text
+        style={{
+          color: "white",
+          fontWeight: "bold",
+          color: "black",
+          width: 100,
+          textAlign: "center",
+        }}
+      >
+        {text}
+      </Text>
     </Pressable>
   );
 }

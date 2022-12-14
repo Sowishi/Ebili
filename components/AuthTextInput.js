@@ -17,6 +17,7 @@ export default function AuthTextInput({
         {
           flexDirection: "row",
           borderWidth: 2,
+          borderColor: "gray",
           justifyContent: "flex-start",
           alignItems: "center",
           width: "75%",

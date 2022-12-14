@@ -117,33 +117,49 @@ export default function Home({ navigation }) {
                 alignItems: "center",
               }}
             >
-              <Text style={{ color: "#4FBCDD", marginVertical: 2 }}>
-                ₱{item.price}
+              <Text style={{ color: "#0096be", marginVertical: 2 }}>
+                ₱{item.price.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ",")}
               </Text>
               <View
                 style={{
                   paddingRight: 5,
-                  borderRightWidth: 2,
-                  borderRightColor: "#4FBCDD",
                   marginRight: 5,
                 }}
               >
-                <Text
+                <View
                   style={{
-                    fontWeight: "bold",
+                    paddingVertical: 3,
+                    borderRadius: 12,
+                    paddingHorizontal: 8,
+                    backgroundColor:
+                      item.sellType === "bidding" ? "#0096be" : "#EFB701",
                   }}
                 >
-                  {item.sellType === "bidding" ? "Bidding" : "Retail"}
-                </Text>
+                  <Text
+                    style={{
+                      fontWeight: "bold",
+                      fontSize: 10,
+                      color: "white",
+                    }}
+                  >
+                    {item.sellType === "bidding" ? "Bidding" : "Retail"}
+                  </Text>
+                </View>
               </View>
             </View>
 
             <Text style={{ color: "gray", marginVertical: 2, fontSize: 10 }}>
-              Seller: {item.owner.firstName + " " + item.owner.lastName}
+              Seller:{" "}
+              <Text style={{ fontWeight: "bold" }}>
+                {item.owner.firstName + " " + item.owner.lastName}
+              </Text>
             </Text>
             {item.createdAt && (
               <Text style={{ color: "gray", marginVertical: 2, fontSize: 10 }}>
-                listed on: {item.createdAt.toDate().toDateString()}
+                Listed:{" "}
+                <Text style={{ fontWeight: "bold" }}>
+                  {item.createdAt.toDate().toDateString()}
+                </Text>
               </Text>
             )}
           </View>
@@ -178,7 +194,7 @@ export default function Home({ navigation }) {
                 fontFamily: "Lato",
               }}
             >
-              Today's Pick
+              Marketplace
             </Text>
 
             <TouchableOpacity

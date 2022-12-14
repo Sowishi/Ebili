@@ -144,7 +144,7 @@ export default function ViewItem({ route, navigation }) {
                 <Text
                   style={{ color: "#4FBCDD", fontWeight: "bold", fontSize: 30 }}
                 >
-                  ₱{data.price}
+                  ₱{data.price.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ",")}
                 </Text>
               </View>
             </View>
@@ -288,7 +288,7 @@ export default function ViewItem({ route, navigation }) {
         contentContainerStyle={{ paddingBottom: 20 }}
         style={{
           position: "relative",
-          backgroundColor: "white",
+          backgroundColor: "#D1E8F7",
           flex: 1.5,
           borderTopLeftRadius: 60,
           borderTopRightRadius: 60,
@@ -308,9 +308,9 @@ export default function ViewItem({ route, navigation }) {
             </View>
             <View style={{ justifyContent: "center", alignItems: "center" }}>
               <Text
-                style={{ fontSize: 30, fontWeight: "bold", color: "#4FBCDD" }}
+                style={{ fontSize: 30, fontWeight: "bold", color: "#0096be" }}
               >
-                ₱{data.price}
+                ₱{data.price.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ",")}
               </Text>
             </View>
           </View>
@@ -321,7 +321,7 @@ export default function ViewItem({ route, navigation }) {
                 fontWeight: "bold",
                 fontSize: 20,
                 marginVertical: 5,
-                fontSize: 20,
+                fontSize: 15,
               }}
             >
               Seller
@@ -356,27 +356,30 @@ export default function ViewItem({ route, navigation }) {
             <View style={{ marginVertical: 10 }}>
               <Text>
                 Highest Bidder:{" "}
-                <Text style={{ fontWeight: "bold", color: "#4FBCDD" }}>
+                <Text style={{ fontWeight: "bold", color: "#0096be" }}>
                   {data.currentBidder}
                 </Text>
               </Text>
               <Text>
                 Highest Bid:{" "}
-                <Text style={{ fontWeight: "bold", color: "#4FBCDD" }}>
-                  ₱{data.bidAmount}{" "}
+                <Text style={{ fontWeight: "bold", color: "#0096be" }}>
+                  ₱
+                  {data.bidAmount
+                    .toString()
+                    .replace(/\B(?=(\d{3})+(?!\d))/g, ",")}
                 </Text>
               </Text>
               <Text>
                 Listed on:{" "}
                 {data && (
-                  <Text style={{ fontWeight: "bold", color: "#4FBCDD" }}>
+                  <Text style={{ fontWeight: "bold", color: "#0096be" }}>
                     {data.createdAt.toDate().toDateString()}
                   </Text>
                 )}
               </Text>
               <Text>
                 Bidding ends in:{" "}
-                <Text style={{ fontWeight: "bold", color: "#4FBCDD" }}>
+                <Text style={{ fontWeight: "bold", color: "#0096be" }}>
                   {data.bidTime}{" "}
                 </Text>
               </Text>
@@ -389,10 +392,10 @@ export default function ViewItem({ route, navigation }) {
                 fontWeight: "bold",
                 fontSize: 20,
                 marginBottom: 5,
-                fontSize: 20,
+                fontSize: 15,
               }}
             >
-              Description
+              Product/Item Description
             </Text>
             <Text style={{ fontSize: 15, color: "gray" }}>
               {data.description}
@@ -408,7 +411,7 @@ export default function ViewItem({ route, navigation }) {
             <TouchableOpacity
               onPress={() => navigation.navigate("Reviews", data)}
               style={{
-                backgroundColor: "#F70000",
+                backgroundColor: "#EFB701",
                 paddingHorizontal: 15,
                 paddingVertical: 5,
                 borderRadius: 5,
@@ -423,7 +426,7 @@ export default function ViewItem({ route, navigation }) {
                   color: "white",
                 }}
               >
-                See all reviews
+                See Reviews
               </Text>
             </TouchableOpacity>
           </View>
@@ -437,7 +440,7 @@ export default function ViewItem({ route, navigation }) {
             right: 20,
             padding: 15,
             borderRadius: 100,
-            backgroundColor: "#4FBCDD",
+            backgroundColor: "#0096be",
             justifyContent: "center",
             alignItems: "center",
           }}

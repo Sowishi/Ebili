@@ -22,6 +22,7 @@ import {
   onSnapshot,
   orderBy,
   limit,
+  doc,
 } from "firebase/firestore";
 import { db } from "../firebaseConfig";
 import { auth, userCol } from "../firebaseConfig";
@@ -38,7 +39,7 @@ export default function Chat({ navigation, route }) {
   const msgRef = useRef();
 
   const [currentUser, setCurrentUser] = useState();
-  const [messages, setMessages] = useState();
+  const [messages, setMessages] = useState([]);
 
   const [text, setText] = useState();
 
@@ -47,12 +48,14 @@ export default function Chat({ navigation, route }) {
       showErrorToast();
       textInputRef.current.clear();
     } else {
-      const messagesRef = collection(db, "messages");
-      addDoc(messagesRef, {
+      const conversationRef = collection(db, "conversation");
+      addDoc(conversationRef, {
         createdAt: serverTimestamp(),
-        text: text,
+        otherUser: otherUser,
         owner: currentUser,
+        text: text,
       });
+
       textInputRef.current.clear();
       setText("");
       msgRef.current.scrollToEnd();
@@ -60,7 +63,7 @@ export default function Chat({ navigation, route }) {
   };
 
   const fetchMessages = () => {
-    const messagesRef = collection(db, "messages");
+    const messagesRef = collection(db, "conversation");
     const q = query(messagesRef, orderBy("createdAt", "desc"), limit(30));
 
     onSnapshot(q, (snapshot) => {
@@ -161,6 +164,17 @@ export default function Chat({ navigation, route }) {
     fetchMessages();
   }, []);
 
+  const filteredMessage = messages.filter((i) => {
+    if (
+      (i.owner.id === currentUser.id && i.otherUser.id === otherUser.id) ||
+      (i.owner.id === otherUser.id && i.otherUser.id === currentUser.id)
+    ) {
+      return i;
+    }
+  });
+
+  console.log(filteredMessage);
+
   return (
     <SafeAreaView
       style={{ flex: 1, backgroundColor: "#f8f8f8", marginTop: 20 }}
@@ -180,7 +194,7 @@ export default function Chat({ navigation, route }) {
           <View style={{ flex: 6 }}>
             <FlatList
               ref={msgRef}
-              data={messages}
+              data={filteredMessage}
               renderItem={renderMessages}
               keyExtractor={(item, index) => index}
             />

@@ -176,6 +176,14 @@ export default function Reviews({ route }) {
 
   return (
     <SafeAreaView style={{ flex: 1 }}>
+      {reviews && reviews.length <= 0 && (
+        <View style={{ backgroundColor: "white" }}>
+          <Text style={{ marginTop: 20, fontSize: 20, textAlign: "center" }}>
+            This item don't have a review yet
+          </Text>
+        </View>
+      )}
+
       {reviews ? (
         <View style={{ flex: 4, backgroundColor: "white" }}>
           <FlatList

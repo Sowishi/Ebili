@@ -8,6 +8,7 @@ import { auth } from "../firebaseConfig";
 import { signInWithEmailAndPassword, onAuthStateChanged } from "@firebase/auth";
 import Toast from "react-native-toast-message";
 import Loading from "../components/loading";
+import { SafeAreaView } from "react-native-safe-area-context";
 
 export default function Login({ navigation }) {
 
@@ -25,6 +26,7 @@ export default function Login({ navigation }) {
     //     navigation.navigate("Drawer")
     //   }
     // })
+
 
     const backHandler = BackHandler.addEventListener(
       "hardwareBackPress",
@@ -76,25 +78,25 @@ export default function Login({ navigation }) {
   };
 
   return (
-    <View style={{ flex: 1 }}>
+    <SafeAreaView style={{ flex: 1 }}>
       {loading && <Loading />}
       <ImageBackground
-        source={require("../assets/ebili.png")}
+        source={require("../assets/ebili-cover.png")}
         style={{
           flex: 1,
         }}
-        imageStyle={{ borderBottomRightRadius: 50, borderBottomLeftRadius: 50 }}
+        imageStyle={{ borderBottomRightRadius: 50, borderBottomLeftRadius: 50, }}
       ></ImageBackground>
       <View style={{ flex: 2 }}>
         <Text
           style={{
             textAlign: "center",
             marginVertical: 10,
-            fontSize: 30,
+            fontSize: 20,
             fontWeight: "bold",
           }}
         >
-          LOGIN
+          LOG IN TO YOUR ACCOUNT
         </Text>
         <View style={{ alignItems: "center" }}>
           <AuthTextInput
@@ -114,17 +116,17 @@ export default function Login({ navigation }) {
               setPass(text);
             }}
           />
-          <Pressable onPress={() => console.warn("fdf")}>
-            <Text style={{ color: "#FF7C7E", fontSize: 15, marginTop: 10 }}>
-              Forget Password?
+          {/* <Pressable onPress={() => console.warn("fdf")}>
+            <Text style={{ color: "gray", fontSize: 15, marginTop: 10 }}>
+              Forget Password? (disabled)
             </Text>
-          </Pressable>
-          <AuthButton handlePress={handleSignIn} text="LOGIN" />
+          </Pressable> */}
+          <AuthButton style={{backgroundColor: "#4FBCDD", width: 200}} handlePress={handleSignIn} text="LOG IN" />
           <Text style={{ color: "gray", marginVertical: 10 }}>or</Text>
           <AuthButton
-            text="SIGNUP"
+            text="SIGN UP"
             handlePress={() => navigation.navigate("Registration")}
-            style={{ marginTop: 0 }}
+            style={{ marginTop: 0, backgroundColor: "#EFB701", width: 200 }}
           />
           {/* <Text style={{ color: "gray", marginVertical: 10 }}>
             ---------------- login with ----------------
@@ -145,6 +147,6 @@ export default function Login({ navigation }) {
           </View> */}
         </View>
       </View>
-    </View>
+    </SafeAreaView>
   );
 }
