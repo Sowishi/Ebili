@@ -72,8 +72,8 @@ export default function Home({ navigation }) {
       <Pressable onPress={() => navigation.navigate("ViewItem", { ...item })}>
         <View
           style={{
-            width: Dimensions.get("window").width * 0.47,
-            height: Dimensions.get("window").width * 0.7,
+            width: Dimensions.get("window").width * 0.3,
+            minHeight: Dimensions.get("window").width * 0.5,
             backgroundColor: "white",
             borderRadius: 20,
             padding: 5,
@@ -93,20 +93,20 @@ export default function Home({ navigation }) {
             style={{
               justifyContent: "center",
               alignItems: "center",
-              flex: 2,
+              height: 100,
             }}
           >
             <Image
               source={{ uri: item.productPhotoUrl }}
-              style={{ width: "80%", height: "80%", borderRadius: 10 }}
-              resizeMode="contain"
+              style={{ width: "90%", height: "90%", borderRadius: 10 }}
+              resizeMode="cover"
             />
           </View>
 
           <View style={{ marginLeft: 10, flex: 1 }}>
             <Text
               numberOfLines={1}
-              style={{ fontSize: 15, fontWeight: "bold" }}
+              style={{ fontSize: 13, fontWeight: "bold" }}
             >
               {item.title}
             </Text>
@@ -117,7 +117,9 @@ export default function Home({ navigation }) {
                 alignItems: "center",
               }}
             >
-              <Text style={{ color: "#0096be", marginVertical: 2 }}>
+              <Text
+                style={{ color: "#0096be", marginVertical: 2, fontSize: 10 }}
+              >
                 ₱{item.price.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ",")}
               </Text>
               <View
@@ -138,7 +140,7 @@ export default function Home({ navigation }) {
                   <Text
                     style={{
                       fontWeight: "bold",
-                      fontSize: 10,
+                      fontSize: 7,
                       color: "white",
                     }}
                   >
@@ -148,14 +150,14 @@ export default function Home({ navigation }) {
               </View>
             </View>
 
-            <Text style={{ color: "gray", marginVertical: 2, fontSize: 10 }}>
+            <Text style={{ color: "gray", marginVertical: 2, fontSize: 7 }}>
               Seller:{" "}
               <Text style={{ fontWeight: "bold" }}>
                 {item.owner.firstName + " " + item.owner.lastName}
               </Text>
             </Text>
             {item.createdAt && (
-              <Text style={{ color: "gray", marginVertical: 2, fontSize: 10 }}>
+              <Text style={{ color: "gray", marginVertical: 2, fontSize: 7 }}>
                 Listed:{" "}
                 <Text style={{ fontWeight: "bold" }}>
                   {item.createdAt.toDate().toDateString()}
@@ -209,7 +211,7 @@ export default function Home({ navigation }) {
               <RefreshControl refreshing={refreshing} onRefresh={onRefresh} />
             }
             data={itemDATA}
-            numColumns={2}
+            numColumns={3}
             renderItem={renderItem}
             keyExtractor={(item, index) => index}
             initialNumToRender={10}

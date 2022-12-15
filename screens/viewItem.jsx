@@ -279,9 +279,9 @@ export default function ViewItem({ route, navigation }) {
         }}
       >
         <Image
-          resizeMode="contain"
+          resizeMode="cover"
           source={{ uri: data.productPhotoUrl }}
-          style={{ width: "70%", height: "70%" }}
+          style={{ width: "90%", height: "90%", borderRadius: 10 }}
         />
       </View>
       <ScrollView
