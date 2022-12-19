@@ -10,7 +10,7 @@
     ],
     "name": "Ebili",
     "slug": "ebili",
-    "version": "1.0.0",
+    "version": "1.0.1",
     "orientation": "portrait",
     "icon": "./assets/appLogo.png",
     "userInterfaceStyle": "light",
@@ -33,7 +33,8 @@
         "foregroundImage": "./assets/appLogo.png",
         "backgroundColor": "#FFFFFF"
       },
-      "package": "com.sowishi.ebili"
+      "package": "com.sowishi.ebili",
+      "versionCode": 2
     },
     "web": {
       "favicon": "./assets/favicon.png"
