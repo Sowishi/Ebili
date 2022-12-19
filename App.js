@@ -1,3 +1,6 @@
+
+// Navigators
+
 import { NavigationContainer } from "@react-navigation/native";
 import { createStackNavigator } from "@react-navigation/stack";
 import {
@@ -6,6 +9,10 @@ import {
   DrawerItem,
   DrawerItemList,
 } from "@react-navigation/drawer";
+import { createMaterialTopTabNavigator } from "@react-navigation/material-top-tabs";
+
+
+// Screens
 
 import Cart from "./screens/cart";
 import Home from "./screens/home";
@@ -14,25 +21,34 @@ import Registration from "./screens/registration";
 import ViewALl from "./screens/viewAll";
 import ViewItem from "./screens/viewItem";
 import User from "./screens/user";
-
-import Toast from "react-native-toast-message";
-import PublicCHat from "./screens/publicChat";
 import Sell from "./screens/sell";
 import Chat from "./screens/chat";
-import Search from "./screens/search";
-import { auth } from "./firebaseConfig";
+import PublicCHat from "./screens/publicChat";
 import Reviews from "./screens/reviews";
 import Checkout from "./screens/checkout";
-import OrderConfirmed from "./screens/orderConfirmed";
-import { createMaterialTopTabNavigator } from "@react-navigation/material-top-tabs";
+import Search from "./screens/search";
 import OrderPending from "./screens/orderPending";
 import OrderCompleted from "./screens/orderCompleted";
-import { Image, Text, View } from "react-native";
+import OrderConfirmed from "./screens/orderConfirmed";
 import Logout from "./screens/logout";
+
+
+
+// Firebase
+import { auth } from "./firebaseConfig";
+
+
+//Dependecies
+import Toast from "react-native-toast-message";
+
+
+// Icons
 import { FontAwesome } from '@expo/vector-icons'; 
 import { FontAwesome5 } from '@expo/vector-icons'; 
 import { Entypo } from '@expo/vector-icons'; 
 
+
+import { Image, Text, View } from "react-native";
 
 
 
