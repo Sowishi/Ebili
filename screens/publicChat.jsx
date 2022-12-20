@@ -24,18 +24,15 @@ import {
   limit,
 } from "firebase/firestore";
 import { db } from "../firebaseConfig";
-import { auth, userCol } from "../firebaseConfig";
-
 import { Toast } from "react-native-toast-message/lib/src/Toast";
 import Loading from "../components/loading";
+import { useSelector } from "react-redux";
 
 export default function PublicCHat({ navigation }) {
-  const user = auth;
-
+  const { currentUser } = useSelector((state) => state.mainReducer);
   const textInputRef = useRef();
   const msgRef = useRef();
 
-  const [currentUser, setCurrentUser] = useState();
   const [messages, setMessages] = useState();
 
   const [text, setText] = useState();
@@ -69,22 +66,6 @@ export default function PublicCHat({ navigation }) {
 
       setMessages(messages.reverse());
     });
-  };
-
-  const fetchUserData = () => {
-    const q = query(userCol, where("id", "==", user.currentUser.uid));
-
-    getDocs(q)
-      .then((snapshot) => {
-        const users = [];
-        snapshot.docs.forEach((doc) => {
-          users.push({ ...doc.data(), docID: doc.id });
-        });
-        setCurrentUser(users[0]);
-      })
-      .catch((e) => {
-        console.log(e);
-      });
   };
 
   const showErrorToast = () => {
@@ -159,13 +140,12 @@ export default function PublicCHat({ navigation }) {
   };
 
   useEffect(() => {
-    fetchUserData();
     fetchMessages();
   }, []);
 
   return (
     <SafeAreaView style={{ flex: 1, backgroundColor: "#f8f8f8" }}>
-      <Header navigation={navigation} />
+      <Header navigation={navigation} currentUser={currentUser} />
       <View style={{ flex: 1 }}>
         <Text style={{ fontSize: 25, fontWeight: "bold", textAlign: "center" }}>
           Public Chat

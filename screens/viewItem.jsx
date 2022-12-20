@@ -11,50 +11,23 @@ import {
   ScrollView,
   TouchableOpacity,
 } from "react-native";
-import React, { useEffect } from "react";
+import React from "react";
 import { SafeAreaView } from "react-native-safe-area-context";
 import { FontAwesome } from "@expo/vector-icons";
 import { useState } from "react";
 import Toast from "react-native-toast-message";
 import { TextInput } from "react-native-gesture-handler";
-import CountDown from "react-native-countdown-component";
-import { userCol, db, auth } from "../firebaseConfig";
-import {
-  getDocs,
-  query,
-  where,
-  updateDoc,
-  doc,
-  onSnapshot,
-  collection,
-  addDoc,
-} from "firebase/firestore";
+import { db } from "../firebaseConfig";
+import { updateDoc, doc, collection, addDoc } from "firebase/firestore";
 import Loading from "../components/loading";
+import { useSelector } from "react-redux";
 
 export default function ViewItem({ route, navigation }) {
+  const { currentUser } = useSelector((state) => state.mainReducer);
   const data = route.params;
   const [addCart, setAddCart] = useState(false);
   const [bid, setBid] = useState();
   const [quantity, setQuantity] = useState(1);
-
-  const user = auth;
-  const [currentUser, setCurrentUser] = useState();
-
-  const fetchUserData = () => {
-    const q = query(userCol, where("id", "==", user.currentUser.uid));
-
-    onSnapshot(q, (snapshot) => {
-      const users = [];
-      snapshot.docs.forEach((doc) => {
-        users.push({ ...doc.data(), docID: doc.id });
-      });
-      setCurrentUser(users[0]);
-    });
-  };
-
-  useEffect(() => {
-    fetchUserData();
-  }, []);
 
   const showSuccessToast = (text) => {
     setAddCart(false);
@@ -451,4 +424,3 @@ export default function ViewItem({ route, navigation }) {
     </SafeAreaView>
   );
 }
-const styles = StyleSheet.create({});

@@ -6,9 +6,7 @@ import {
   Image,
   Pressable,
 } from "react-native";
-import React, { useEffect, useState } from "react";
-import { FontAwesome } from "@expo/vector-icons";
-import Header from "../components/header";
+import React, { useState } from "react";
 
 import { SafeAreaView } from "react-native-safe-area-context";
 export default function ViewALl({ route, navigation }) {

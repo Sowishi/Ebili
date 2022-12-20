@@ -27,7 +27,7 @@ export default function OrderConfirmed({ navigation }) {
         </Text>
         <View>
           <TouchableOpacity
-            onPress={() => navigation.navigate("Home")}
+            onPress={() => navigation.navigate("Drawer")}
             style={{
               borderWidth: 1,
               borderColor: "white",

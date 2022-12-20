@@ -5,30 +5,17 @@ import {
   deleteDoc,
   doc,
   onSnapshot,
-  query,
   updateDoc,
-  where,
 } from "firebase/firestore";
-import { auth, db, userCol } from "../firebaseConfig";
+import { db } from "../firebaseConfig";
 import Loading from "../components/loading";
 
 import { Toast } from "react-native-toast-message/lib/src/Toast";
+import { useSelector } from "react-redux";
+
 export default function OrderComplete() {
   const [orders, setOrders] = useState([]);
-  const user = auth;
-  const [currentUser, setCurrentUser] = useState();
-
-  const fetchUserData = () => {
-    const q = query(userCol, where("id", "==", user.currentUser.uid));
-
-    onSnapshot(q, (snapshot) => {
-      const users = [];
-      snapshot.docs.forEach((doc) => {
-        users.push({ ...doc.data(), docID: doc.id });
-      });
-      setCurrentUser(users[0]);
-    });
-  };
+  const { currentUser } = useSelector((state) => state.mainReducer);
 
   const fetchOrders = () => {
     const orderRef = collection(db, "orders");
@@ -65,9 +52,9 @@ export default function OrderComplete() {
   };
 
   useEffect(() => {
-    fetchUserData();
     fetchOrders();
   }, []);
+
   const ordersFiltered = orders.filter((i) => {
     if (i.owner.id === currentUser.id) {
       return i;

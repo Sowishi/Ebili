@@ -16,23 +16,15 @@ import { MaterialIcons } from "@expo/vector-icons";
 import { storage } from "../firebaseConfig";
 import { ref, uploadBytes, getDownloadURL } from "@firebase/storage";
 import { Toast } from "react-native-toast-message/lib/src/Toast";
-import { userCol, db, auth } from "../firebaseConfig";
-import {
-  getDocs,
-  query,
-  where,
-  updateDoc,
-  doc,
-  onSnapshot,
-  collection,
-  addDoc,
-} from "firebase/firestore";
+import { db } from "../firebaseConfig";
+import { collection, addDoc } from "firebase/firestore";
 
 import * as ImagePicker from "expo-image-picker";
 import { serverTimestamp } from "firebase/firestore";
+import { useSelector } from "react-redux";
 
 export default function Sell({ navigation }) {
-  const user = auth;
+  const { currentUser } = useSelector((state) => state.mainReducer);
 
   const [productPhotoUrl, setProductPhotoUrl] = useState();
   const [category, setCategory] = useState();
@@ -43,7 +35,6 @@ export default function Sell({ navigation }) {
   const [price, setPrice] = useState();
   const [description, setDescription] = useState();
 
-  const [currentUser, setCurrentUser] = useState();
   const [disable, setDisable] = useState(false);
 
   const categoryRef = useRef();
@@ -52,18 +43,6 @@ export default function Sell({ navigation }) {
   const bidTimeRef = useRef();
   const priceRef = useRef();
   const descriptionRef = useRef();
-
-  const fetchUserData = () => {
-    const q = query(userCol, where("id", "==", user.currentUser.uid));
-
-    onSnapshot(q, (snapshot) => {
-      const users = [];
-      snapshot.docs.forEach((doc) => {
-        users.push({ ...doc.data(), docID: doc.id });
-      });
-      setCurrentUser(users[0]);
-    });
-  };
 
   const categories = [
     "electronics",
@@ -191,10 +170,6 @@ export default function Sell({ navigation }) {
       text1: "All fields must not be empty!",
     });
   };
-
-  useEffect(() => {
-    fetchUserData();
-  }, []);
 
   return (
     <SafeAreaView>

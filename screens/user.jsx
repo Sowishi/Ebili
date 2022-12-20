@@ -11,50 +11,30 @@ import React, { useEffect, useState } from "react";
 import { SafeAreaView } from "react-native-safe-area-context";
 import { Feather } from "@expo/vector-icons";
 
-import { auth } from "../firebaseConfig";
+import { auth, userCol } from "../firebaseConfig";
 import { signOut } from "@firebase/auth";
-import { userCol, db } from "../firebaseConfig";
-import { getDocs, query, where, updateDoc, doc } from "firebase/firestore";
+import { db } from "../firebaseConfig";
+import { updateDoc, doc } from "firebase/firestore";
 
 import { storage } from "../firebaseConfig";
 import { ref, uploadBytes, getDownloadURL } from "@firebase/storage";
-import { v4 as uuidv4 } from "uuid";
 import { Toast } from "react-native-toast-message/lib/src/Toast";
 
 import * as ImagePicker from "expo-image-picker";
+import { useDispatch, useSelector } from "react-redux";
+import { fetchUser } from "../redux/actions";
 
 export default function User({ navigation, route }) {
-  const otherUser = route.params;
-
   const user = auth;
-
-  const [currentUser, setCurrentUser] = useState();
+  const otherUser = route.params;
+  const { currentUser } = useSelector((state) => state.mainReducer);
+  const dispatch = useDispatch();
 
   const handleSIgnOut = () => {
     signOut(auth).then(() => {
       navigation.replace("Login");
     });
   };
-
-  const fetchUserData = () => {
-    const q = query(userCol, where("id", "==", user.currentUser.uid));
-
-    getDocs(q)
-      .then((snapshot) => {
-        const users = [];
-        snapshot.docs.forEach((doc) => {
-          users.push({ ...doc.data(), docID: doc.id });
-        });
-        setCurrentUser(users[0]);
-      })
-      .catch((e) => {
-        console.log(e);
-      });
-  };
-
-  useEffect(() => {
-    fetchUserData();
-  }, []);
 
   const showSuccessToast = () => {
     Toast.show({
@@ -66,7 +46,7 @@ export default function User({ navigation, route }) {
   const updateProfilePic = (url, docID) => {
     const docRef = doc(db, "users", docID);
     updateDoc(docRef, { photoUrl: url }).then(() => {
-      fetchUserData();
+      dispatch(fetchUser(userCol, user));
       showSuccessToast();
     });
   };

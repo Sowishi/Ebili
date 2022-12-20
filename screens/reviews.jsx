@@ -8,41 +8,21 @@ import {
   FlatList,
 } from "react-native";
 import React, { useEffect, useState } from "react";
-import {
-  addDoc,
-  collection,
-  doc,
-  onSnapshot,
-  query,
-  setDoc,
-  updateDoc,
-  where,
-} from "firebase/firestore";
-import { auth, db, userCol } from "../firebaseConfig";
+import { addDoc, collection, doc, onSnapshot } from "firebase/firestore";
+import { db } from "../firebaseConfig";
 import Loading from "../components/loading";
 import { AntDesign } from "@expo/vector-icons";
 import { Toast } from "react-native-toast-message/lib/src/Toast";
+import { useSelector } from "react-redux";
 
 export default function Reviews({ route }) {
   const data = route.params;
 
-  const user = auth;
-  const [currentUser, setCurrentUser] = useState();
+  const { currentUser } = useSelector((state) => state.mainReducer);
+
   const [heart, setHeart] = useState();
   const [text, setText] = useState();
   const [reviews, setReviews] = useState();
-
-  const fetchUserData = () => {
-    const q = query(userCol, where("id", "==", user.currentUser.uid));
-
-    onSnapshot(q, (snapshot) => {
-      const users = [];
-      snapshot.docs.forEach((doc) => {
-        users.push({ ...doc.data(), docID: doc.id });
-      });
-      setCurrentUser(users[0]);
-    });
-  };
 
   const handleReviewSend = () => {
     if (text === undefined) {
@@ -81,7 +61,6 @@ export default function Reviews({ route }) {
 
   useEffect(() => {
     fetchReviews();
-    fetchUserData();
   }, []);
 
   if (!currentUser) {
