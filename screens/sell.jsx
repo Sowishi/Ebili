@@ -173,7 +173,7 @@ export default function Sell({ navigation }) {
 
   return (
     <SafeAreaView>
-      <Header navigation={navigation} />
+      <Header navigation={navigation} currentUser={currentUser} />
       <View
         style={{
           width: "100%",
