@@ -1,6 +1,5 @@
 import React, { useEffect, useState } from "react";
 import { SafeAreaView } from "react-native-safe-area-context";
-import Banner from "../components/banner";
 import {
   View,
   Text,
@@ -14,26 +13,25 @@ import {
 } from "react-native";
 
 import Header from "../components/header";
-import { FontAwesome } from "@expo/vector-icons";
-import { auth, db } from "../firebaseConfig";
-import Loading from "../components/loading";
+import { auth, db, userCol } from "../firebaseConfig";
 import { collection, onSnapshot } from "firebase/firestore";
-import {
-  Lato_100Thin,
-  Lato_100Thin_Italic,
-  Lato_300Light,
-  Lato_300Light_Italic,
-  Lato_400Regular,
-  Lato_400Regular_Italic,
-  Lato_700Bold,
-  Lato_700Bold_Italic,
-  Lato_900Black,
-  Lato_900Black_Italic,
-} from "@expo-google-fonts/lato";
 
-import { useFonts } from "expo-font";
+//Redux
+import { useSelector, useDispatch } from "react-redux";
+import { Store } from "../redux/store";
+import { fetchUser } from "../redux/actions";
+import Loading from "../components/loading";
 
 export default function Home({ navigation }) {
+  const user = auth;
+
+  //Redux state
+
+  const dispatch = useDispatch();
+  const { currentUser } = useSelector((state) => state.mainReducer);
+
+  //State
+
   const [itemDATA, setItemDATA] = useState([]);
   const [refreshing, setRefreshing] = useState(false);
   const [loading, setLoading] = useState();
@@ -49,22 +47,9 @@ export default function Home({ navigation }) {
     });
   };
 
-  const [loaded] = useFonts({
-    Lato_100Thin,
-    Lato_100Thin_Italic,
-    Lato_300Light,
-    Lato_300Light_Italic,
-    Lato_400Regular,
-    Lato_400Regular_Italic,
-    Lato_700Bold,
-    Lato_700Bold_Italic,
-    Lato_900Black,
-    test: Lato_900Black_Italic,
-    Lato: require("../assets/fonts/Lato-Regular.ttf"),
-  });
-
   useEffect(() => {
     getProducts();
+    dispatch(fetchUser(userCol, user));
   }, []);
 
   const renderItem = ({ item }) => {
@@ -174,50 +159,49 @@ export default function Home({ navigation }) {
     getProducts();
   };
 
+  if (Object.keys(currentUser).length === 0) {
+    return <Loading />;
+  }
+
   return (
     <SafeAreaView style={{ backgroundColor: "#f8f8f8", flex: 1 }}>
-      {loaded && (
-        <>
-          <Header currentUser={auth} navigation={navigation} />
+      <Header currentUser={currentUser} navigation={navigation} />
 
-          <View
-            style={{
-              alignItems: "center",
-              flexDirection: "row",
-              justifyContent: "space-between",
-              marginHorizontal: 20,
-              marginVertical: 10,
-            }}
-          >
-            <Text
-              style={{
-                fontWeight: "bold",
-                fontSize: 25,
-                fontFamily: "Lato",
-              }}
-            >
-              Marketplace
-            </Text>
+      <View
+        style={{
+          alignItems: "center",
+          flexDirection: "row",
+          justifyContent: "space-between",
+          marginHorizontal: 20,
+          marginVertical: 10,
+        }}
+      >
+        <Text
+          style={{
+            fontWeight: "bold",
+            fontSize: 25,
+          }}
+        >
+          Marketplace
+        </Text>
 
-            <TouchableOpacity
-              onPress={() => navigation.navigate("ViewAll", { itemDATA })}
-            >
-              <Text style={{ fontSize: 13, color: "gray" }}>View All</Text>
-            </TouchableOpacity>
-          </View>
+        <TouchableOpacity
+          onPress={() => navigation.navigate("ViewAll", { itemDATA })}
+        >
+          <Text style={{ fontSize: 13, color: "gray" }}>View All</Text>
+        </TouchableOpacity>
+      </View>
 
-          <FlatList
-            refreshControl={
-              <RefreshControl refreshing={refreshing} onRefresh={onRefresh} />
-            }
-            data={itemDATA}
-            numColumns={3}
-            renderItem={renderItem}
-            keyExtractor={(item, index) => index}
-            initialNumToRender={10}
-          />
-        </>
-      )}
+      <FlatList
+        refreshControl={
+          <RefreshControl refreshing={refreshing} onRefresh={onRefresh} />
+        }
+        data={itemDATA}
+        numColumns={3}
+        renderItem={renderItem}
+        keyExtractor={(item, index) => index}
+        initialNumToRender={10}
+      />
     </SafeAreaView>
   );
 }

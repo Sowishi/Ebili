@@ -48,11 +48,21 @@ import { FontAwesome5 } from '@expo/vector-icons';
 import { Entypo } from '@expo/vector-icons'; 
 
 
+//Redux
+import { Store } from "./redux/store";
+import { Provider } from "react-redux";
+
+
+
 import { Image, Text, View } from "react-native";
 
 
 
 export default function App() {
+
+
+  //Navigators instance
+
   const Stack = createStackNavigator();
   const Drawer = createDrawerNavigator();
   const Order = createMaterialTopTabNavigator();
@@ -60,6 +70,7 @@ export default function App() {
   const handleSIgnOut = (props) => {
     console.log(props);
   };
+  
 
   function CustomDrawerContent(props) {
     return (
@@ -157,7 +168,7 @@ export default function App() {
   };
 
   return (
-    <>
+    <Provider store={Store}>
       <NavigationContainer>
         <Stack.Navigator screenOptions={{ headerShown: false }}>
           <Stack.Screen name="Login" component={Login} />
@@ -209,6 +220,6 @@ export default function App() {
         </Stack.Navigator>
       </NavigationContainer>
       <Toast />
-    </>
+    </Provider>
   );
 }

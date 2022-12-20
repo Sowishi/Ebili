@@ -1,51 +1,14 @@
-import {
-  View,
-  Text,
-  TouchableOpacity,
-  Image,
-  ActivityIndicator,
-} from "react-native";
-import React, { useEffect, useState } from "react";
+import { View, TouchableOpacity, Image, ActivityIndicator } from "react-native";
+import React from "react";
 import { Entypo } from "@expo/vector-icons";
-import { Ionicons } from "@expo/vector-icons";
 import AuthTextInput from "./AuthTextInput";
-import { userCol, db, auth } from "../firebaseConfig";
-import {
-  getDocs,
-  query,
-  where,
-  updateDoc,
-  doc,
-  onSnapshot,
-} from "firebase/firestore";
 
-export default function Header({ navigation }) {
-  const user = auth;
-  const [currentUser, setCurrentUser] = useState();
-
-  const fetchUserData = () => {
-    const q = query(userCol, where("id", "==", user.currentUser.uid));
-
-    onSnapshot(q, (snapshot) => {
-      const users = [];
-      snapshot.docs.forEach((doc) => {
-        users.push({ ...doc.data(), docID: doc.id });
-      });
-      setCurrentUser(users[0]);
-    });
-  };
-
-  useEffect(() => {
-    fetchUserData();
-  }, []);
-
+export default function Header({ navigation, currentUser }) {
   return (
     <View
       style={{
         backgroundColor: "#4FBCDD",
         padding: 10,
-        // borderBottomLeftRadius: 60,
-        // borderBottomRightRadius: 60,
         marginBottom: 10,
       }}
     >
@@ -112,13 +75,6 @@ export default function Header({ navigation }) {
           </TouchableOpacity>
         </View>
       </View>
-      {/* <View
-        style={{
-          flexDirection: "row",
-          alignItems: "center",
-          justifyContent: "center",
-        }}
-      ></View> */}
     </View>
   );
 }
