@@ -21,20 +21,19 @@ export default function Login({ navigation }) {
 
   useEffect(() => {
 
-    // onAuthStateChanged(user, () => {
-    //   if(user){
-    //     navigation.navigate("Drawer")
-    //   }
-
+    onAuthStateChanged(user, () => {
+      if(user.currentUser){
+        navigation.navigate("Drawer")
+      }
       
-    // })
+    })
 
     const backHandler = BackHandler.addEventListener(
       "hardwareBackPress",
       () => true
     );
     return () => backHandler.remove();
-  });
+  }, []);
 
   const handleError = () => {
     const reg = /^\w+([\.-]?\w+)*@\w+([\.-]?\w+)*(\.\w{2,3})+$/;

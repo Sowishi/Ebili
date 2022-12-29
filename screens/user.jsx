@@ -74,6 +74,17 @@ export default function User({ navigation, route }) {
     }
   };
 
+  useEffect(() => {
+    const backHandler = BackHandler.addEventListener(
+      "hardwareBackPress",
+      () => {
+        navigation.goBack();
+        return true;
+      }
+    );
+    return () => backHandler.remove();
+  }, []);
+
   return (
     <SafeAreaView style={{ flex: 1, backgroundColor: "#f8f8f8" }}>
       <View

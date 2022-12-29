@@ -10,8 +10,9 @@ import {
   Button,
   ScrollView,
   TouchableOpacity,
+  BackHandler,
 } from "react-native";
-import React from "react";
+import React, { useEffect } from "react";
 import { SafeAreaView } from "react-native-safe-area-context";
 import { FontAwesome } from "@expo/vector-icons";
 import { useState } from "react";
@@ -75,6 +76,17 @@ export default function ViewItem({ route, navigation }) {
       showSuccessToast("Added to cart!");
     });
   };
+
+  useEffect(() => {
+    const backHandler = BackHandler.addEventListener(
+      "hardwareBackPress",
+      () => {
+        navigation.goBack();
+        return true;
+      }
+    );
+    return () => backHandler.remove();
+  }, []);
 
   return (
     <SafeAreaView style={{ flex: 1 }}>

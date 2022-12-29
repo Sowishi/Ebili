@@ -7,6 +7,7 @@ import {
   Pressable,
   ActivityIndicator,
   TouchableHighlight,
+  BackHandler,
 } from "react-native";
 import React, { useEffect, useState } from "react";
 import { SafeAreaView } from "react-native-safe-area-context";
@@ -224,6 +225,14 @@ export default function Cart({ navigation, route }) {
 
   useEffect(() => {
     fetchCarts();
+    const backHandler = BackHandler.addEventListener(
+      "hardwareBackPress",
+      () => {
+        navigation.goBack();
+        return true;
+      }
+    );
+    return () => backHandler.remove();
   }, []);
 
   if (cart === undefined || cart.length === 0) {

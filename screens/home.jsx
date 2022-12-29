@@ -1,4 +1,6 @@
 import React, { useEffect, useState } from "react";
+import { useFocusEffect } from "@react-navigation/native";
+
 import { SafeAreaView } from "react-native-safe-area-context";
 import {
   View,
@@ -9,7 +11,8 @@ import {
   Pressable,
   TouchableOpacity,
   RefreshControl,
-  ActivityIndicator,
+  BackHandler,
+  Alert,
 } from "react-native";
 
 import Header from "../components/header";
@@ -51,6 +54,24 @@ export default function Home({ navigation }) {
     getProducts();
     dispatch(fetchUser(userCol, user));
   }, []);
+
+  useFocusEffect(() => {
+    const backHandler = BackHandler.addEventListener(
+      "hardwareBackPress",
+      () => {
+        Alert.alert("Ebili", "Are you sure you want to exit?", [
+          {
+            text: "Cancel",
+            onPress: () => {},
+            style: "cancel",
+          },
+          { text: "OK", onPress: () => BackHandler.exitApp() },
+        ]);
+        return true;
+      }
+    );
+    return () => backHandler.remove();
+  });
 
   const renderItem = ({ item }) => {
     return (
