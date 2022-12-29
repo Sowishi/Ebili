@@ -24,6 +24,7 @@ import { useSelector, useDispatch } from "react-redux";
 import { Store } from "../redux/store";
 import { fetchUser } from "../redux/actions";
 import Loading from "../components/loading";
+import LoginLoading from "../components/loginLoading";
 
 export default function Home({ navigation }) {
   const user = auth;
@@ -181,7 +182,7 @@ export default function Home({ navigation }) {
   };
 
   if (Object.keys(currentUser).length === 0) {
-    return <Loading />;
+    return <LoginLoading />;
   }
 
   return (
