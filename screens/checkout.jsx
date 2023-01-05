@@ -214,8 +214,6 @@ export default function Checkout({ navigation, route }) {
     );
   };
 
-  console.log(currentUser, "udfsd");
-
   return (
     <SafeAreaView>
       <Modal

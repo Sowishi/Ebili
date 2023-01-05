@@ -136,6 +136,7 @@ export default function Cart({ navigation, route }) {
             }}
           >
             <Checkbox
+              style={{ width: 17, height: 17 }}
               value={item.addedToCart}
               onValueChange={() => handleAddToCart(item)}
               color={item.addedToCart ? "#4FBCDD" : undefined}
@@ -174,6 +175,7 @@ export default function Cart({ navigation, route }) {
                   backgroundColor: "#4FBCDD",
                   padding: 5,
                   borderRadius: 5,
+                  marginLeft: 19,
                 }}
               >
                 <Text style={{ color: "white" }}>Remove</Text>
@@ -287,6 +289,7 @@ export default function Cart({ navigation, route }) {
             >
               <Text style={{ marginRight: 5 }}>Select All</Text>
               <Checkbox
+                style={{ height: 15, width: 15 }}
                 value={selectAll}
                 onValueChange={handleSelectAll}
                 color={selectAll ? "#4FBCDD" : undefined}
@@ -304,6 +307,7 @@ export default function Cart({ navigation, route }) {
                   paddingHorizontal: 10,
                   paddingVertical: 5,
                   borderRadius: 5,
+                  marginRight: 15,
                 }}
               >
                 <Text style={{ color: "white" }}>Checkout</Text>

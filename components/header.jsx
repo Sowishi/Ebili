@@ -2,6 +2,7 @@ import { View, TouchableOpacity, Image, ActivityIndicator } from "react-native";
 import React from "react";
 import { Entypo } from "@expo/vector-icons";
 import AuthTextInput from "./AuthTextInput";
+import { MaterialCommunityIcons } from "@expo/vector-icons";
 
 export default function Header({ navigation, currentUser }) {
   return (
@@ -38,7 +39,7 @@ export default function Header({ navigation, currentUser }) {
             backgroundColor: "white",
             width: "60%",
           }}
-          placeHolder="Search Something..."
+          placeHolder="Search Something"
           entypoIconName="magnifying-glass"
           secured={false}
         />
@@ -60,7 +61,11 @@ export default function Header({ navigation, currentUser }) {
                 marginRight: 10,
               }}
             >
-              <Entypo name="shopping-cart" size={25} color="#4FBCDD" />
+              <MaterialCommunityIcons
+                name="cart-variant"
+                size={24}
+                color="#4FBCDD"
+              />
             </View>
           </TouchableOpacity>
           <TouchableOpacity onPress={() => navigation.navigate("User")}>

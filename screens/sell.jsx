@@ -83,6 +83,7 @@ export default function Sell({ navigation }) {
       title === undefined ||
       price === undefined ||
       description === undefined ||
+      description.length <= 50 ||
       productPhotoUrl === undefined ||
       bidTime === undefined;
 
@@ -92,10 +93,15 @@ export default function Sell({ navigation }) {
       title === undefined ||
       price === undefined ||
       description === undefined ||
+      description.length <= 50 ||
       productPhotoUrl === undefined;
 
     if (sellType === "bidding" ? biddingCondition : retailCondition) {
-      showErrorToast();
+      showErrorToast(
+        description.length <= 50
+          ? "Description should be greater than 50 characters"
+          : "All fields must not be empty!"
+      );
       setDisable(false);
     } else {
       const biddingData = {
@@ -164,10 +170,10 @@ export default function Sell({ navigation }) {
     });
   };
 
-  const showErrorToast = () => {
+  const showErrorToast = (text) => {
     Toast.show({
       type: "error",
-      text1: "All fields must not be empty!",
+      text1: text,
     });
   };
 

@@ -11,8 +11,10 @@ export function mainReducer(state=initalState, action){
 
     switch(action.type){
         case actions.FETCH_USER:
-           const toReturn = {...state, currentUser: action.payload.user}
-            return toReturn
+           return {...state, currentUser: action.payload.user}
+
+        case actions.GET_PRODUCT:
+            return {...state, products: action.payload.products}
 
         default:
             console.log("default called")

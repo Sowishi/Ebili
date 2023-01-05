@@ -15,9 +15,9 @@
     "icon": "./assets/appLogo.png",
     "userInterfaceStyle": "light",
     "splash": {
-      "image": "./assets/ebili-logo.png",
+      "image": "./assets/ebili-cover.png",
       "resizeMode": "contain",
-      "backgroundColor": "#1AE4D8"
+      "backgroundColor": "white"
     },
     "updates": {
       "fallbackToCacheTimeout": 0

@@ -15,7 +15,7 @@ import Loading from "../components/loading";
 import Toast from "react-native-toast-message";
 
 import { userCol } from "../firebaseConfig";
-import { addDoc } from "@firebase/firestore";
+import { addDoc, serverTimestamp } from "@firebase/firestore";
 
 export default function Registration({ navigation }) {
   const [firstName, setFirstName] = useState();
@@ -59,6 +59,7 @@ export default function Registration({ navigation }) {
             id: userCredentials.user.uid,
             firstName: firstName,
             lastName: lastName,
+            createdAt: serverTimestamp(),
             role: "customer",
             photoUrl:
               "https://thumbs.dreamstime.com/b/default-avatar-profile-vector-user-profile-default-avatar-profile-vector-user-profile-profile-179376714.jpg",

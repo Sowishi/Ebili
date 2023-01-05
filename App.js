@@ -34,6 +34,7 @@ import Logout from "./screens/logout";
 
 
 
+
 // Firebase
 import { auth } from "./firebaseConfig";
 
@@ -46,6 +47,8 @@ import Toast from "react-native-toast-message";
 import { FontAwesome } from '@expo/vector-icons'; 
 import { FontAwesome5 } from '@expo/vector-icons'; 
 import { Entypo } from '@expo/vector-icons'; 
+import { MaterialCommunityIcons } from '@expo/vector-icons'; 
+
 
 
 //Redux
@@ -188,7 +191,7 @@ export default function App() {
           />
 
           <Stack.Screen
-            options={{ headerShown: true, title: "" }}
+            options={{ headerShown: false, title: "" }}
             name="Search"
             component={Search}
           />
@@ -210,9 +213,19 @@ export default function App() {
           />
           <Stack.Screen
             name="Cart"
+          
             options={{
+              headerTitle: () => {
+                return (
+                  <View style={{flexDirection: "row", justifyContent: "center", alignItems: "center"}}>
+                    <Text style={{fontSize: 20, fontWeight: "bold", color: "#4FBCDD", marginRight: 5}}>Shopping Cart</Text>
+                    <MaterialCommunityIcons name="cart-variant" size={20} color="#4FBCDD" /> 
+                  </View>
+                )
+
+              },
+
               headerShown: true,
-              headerTitle: "Shopping Cart",
               headerTitleStyle: { color: "#4FBCDD" },
             }}
             component={Cart}

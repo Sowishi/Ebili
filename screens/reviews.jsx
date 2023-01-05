@@ -8,12 +8,24 @@ import {
   FlatList,
 } from "react-native";
 import React, { useEffect, useState } from "react";
-import { addDoc, collection, doc, onSnapshot } from "firebase/firestore";
+import {
+  addDoc,
+  collection,
+  doc,
+  onSnapshot,
+  serverTimestamp,
+} from "firebase/firestore";
 import { db } from "../firebaseConfig";
 import Loading from "../components/loading";
 import { AntDesign } from "@expo/vector-icons";
+import { MaterialIcons } from "@expo/vector-icons";
+
 import { Toast } from "react-native-toast-message/lib/src/Toast";
 import { useSelector } from "react-redux";
+
+import { storage } from "../firebaseConfig";
+import { ref, uploadBytes, getDownloadURL } from "@firebase/storage";
+import * as ImagePicker from "expo-image-picker";
 
 export default function Reviews({ route }) {
   const data = route.params;
@@ -23,6 +35,8 @@ export default function Reviews({ route }) {
   const [heart, setHeart] = useState();
   const [text, setText] = useState();
   const [reviews, setReviews] = useState();
+  const [photoUrl, setPhotoUrl] = useState();
+  const [selectedHeart, setSelectedHeartt] = useState("all");
 
   const handleReviewSend = () => {
     if (text === undefined) {
@@ -36,6 +50,8 @@ export default function Reviews({ route }) {
         user: currentUser,
         text: text,
         rate: heart,
+        photoUrl: photoUrl === undefined ? "" : photoUrl,
+        createdAt: serverTimestamp(),
       })
         .then(() => {
           showSuccessToast("Thank you for your review!");
@@ -88,7 +104,7 @@ export default function Reviews({ route }) {
           backgroundColor: "white",
           flexDirection: "row",
           justifyContent: "center",
-          alignItems: "center",
+          alignItems: "flex-start",
           marginVertical: 10,
           marginHorizontal: 15,
         }}
@@ -105,9 +121,30 @@ export default function Reviews({ route }) {
             marginLeft: 10,
           }}
         >
-          <Text style={{ fontWeight: "bold" }}>
-            {item.user.firstName + " " + item.user.lastName}
-          </Text>
+          <View
+            style={{
+              flexDirection: "row",
+              justifyContent: "center",
+              alignItems: "center",
+            }}
+          >
+            <Text style={{ fontWeight: "bold" }}>
+              {item.user.firstName + " " + item.user.lastName}
+            </Text>
+            <Text
+              style={{
+                fontWeight: "bold",
+                color: "gray",
+                marginLeft: 5,
+                fontSize: 10,
+              }}
+            >
+              {item.createdAt !== undefined &&
+                item.createdAt !== null &&
+                item.createdAt.toDate().toDateString()}
+            </Text>
+          </View>
+
           <View
             style={{
               flexDirection: "row",
@@ -148,9 +185,48 @@ export default function Reviews({ route }) {
             />
           </View>
           <Text>{item.text}</Text>
+          {item.photoUrl && (
+            <Image
+              source={{ uri: item.photoUrl }}
+              style={{ width: 200, height: 200 }}
+              resizeMode="contain"
+            />
+          )}
         </View>
       </View>
     );
+  };
+
+  let filteredReviews = [];
+  if (reviews !== undefined) {
+    filteredReviews = reviews.filter((i) => {
+      if (i.rate === selectedHeart) {
+        return i;
+      }
+    });
+  }
+
+  const handleUploadPhoto = async () => {
+    let result = await ImagePicker.launchImageLibraryAsync({
+      mediaTypes: ImagePicker.MediaTypeOptions.All,
+      allowsEditing: true,
+
+      quality: 1,
+    });
+
+    if (!result.canceled) {
+      const img = result.assets[0].uri;
+      const imgRef = ref(storage, `reviews/${img}`);
+
+      const imgFetch = await fetch(img);
+      const bytes = await imgFetch.blob();
+
+      uploadBytes(imgRef, bytes).then(() => {
+        getDownloadURL(imgRef).then((url) => {
+          setPhotoUrl(url);
+        });
+      });
+    }
   };
 
   return (
@@ -165,8 +241,181 @@ export default function Reviews({ route }) {
 
       {reviews ? (
         <View style={{ flex: 4, backgroundColor: "white" }}>
+          {reviews.length >= 1 && (
+            <View
+              style={{
+                flexDirection: "row",
+                justifyContent: "space-around",
+                marginVertical: 10,
+              }}
+            >
+              <TouchableOpacity
+                style={{
+                  flexDirection: "row",
+                  justifyContent: "center",
+                  alignItems: "center",
+                  paddingVertical: 3,
+                  paddingHorizontal: 5,
+                  borderRadius: 5,
+                  backgroundColor:
+                    selectedHeart === "all" ? "#4FBCDD" : "#f8f8f8",
+                }}
+                onPress={() => setSelectedHeartt("all")}
+              >
+                <Text
+                  style={{
+                    fontWeight: "bold",
+                    color: selectedHeart === "all" ? "white" : "black",
+                  }}
+                >
+                  All
+                </Text>
+              </TouchableOpacity>
+              <TouchableOpacity
+                style={{
+                  flexDirection: "row",
+                  justifyContent: "center",
+                  alignItems: "center",
+
+                  paddingVertical: 3,
+                  paddingHorizontal: 5,
+                  borderRadius: 5,
+                  backgroundColor: selectedHeart === 1 ? "#4FBCDD" : "#f8f8f8",
+                }}
+                onPress={() => setSelectedHeartt(1)}
+              >
+                <Text
+                  style={{
+                    fontWeight: "bold",
+                    color: selectedHeart === 1 ? "white" : "black",
+                  }}
+                >
+                  1
+                </Text>
+                <AntDesign
+                  style={{ marginHorizontal: 5 }}
+                  name="heart"
+                  size={15}
+                  color="#F70000"
+                />
+              </TouchableOpacity>
+              <TouchableOpacity
+                style={{
+                  flexDirection: "row",
+                  justifyContent: "center",
+                  alignItems: "center",
+
+                  paddingVertical: 3,
+                  paddingHorizontal: 5,
+                  borderRadius: 5,
+                  backgroundColor: selectedHeart === 2 ? "#4FBCDD" : "#f8f8f8",
+                }}
+                onPress={() => setSelectedHeartt(2)}
+              >
+                <Text
+                  style={{
+                    fontWeight: "bold",
+                    color: selectedHeart === 2 ? "white" : "black",
+                  }}
+                >
+                  2
+                </Text>
+                <AntDesign
+                  style={{ marginHorizontal: 5 }}
+                  name="heart"
+                  size={15}
+                  color="#F70000"
+                />
+              </TouchableOpacity>
+              <TouchableOpacity
+                style={{
+                  flexDirection: "row",
+                  justifyContent: "center",
+                  alignItems: "center",
+
+                  paddingVertical: 3,
+                  paddingHorizontal: 5,
+                  borderRadius: 5,
+                  backgroundColor: selectedHeart === 3 ? "#4FBCDD" : "#f8f8f8",
+                }}
+                onPress={() => setSelectedHeartt(3)}
+              >
+                <Text
+                  style={{
+                    fontWeight: "bold",
+                    color: selectedHeart === 3 ? "white" : "black",
+                  }}
+                >
+                  3
+                </Text>
+                <AntDesign
+                  style={{ marginHorizontal: 5 }}
+                  name="heart"
+                  size={15}
+                  color="#F70000"
+                />
+              </TouchableOpacity>
+              <TouchableOpacity
+                style={{
+                  flexDirection: "row",
+                  justifyContent: "center",
+                  alignItems: "center",
+
+                  paddingVertical: 3,
+                  paddingHorizontal: 5,
+                  borderRadius: 5,
+                  backgroundColor: selectedHeart === 4 ? "#4FBCDD" : "#f8f8f8",
+                }}
+                onPress={() => setSelectedHeartt(4)}
+              >
+                <Text
+                  style={{
+                    fontWeight: "bold",
+                    color: selectedHeart === 4 ? "white" : "black",
+                  }}
+                >
+                  4
+                </Text>
+                <AntDesign
+                  style={{ marginHorizontal: 5 }}
+                  name="heart"
+                  size={15}
+                  color="#F70000"
+                />
+              </TouchableOpacity>
+              <TouchableOpacity
+                style={{
+                  flexDirection: "row",
+                  justifyContent: "center",
+                  alignItems: "center",
+
+                  paddingVertical: 3,
+                  paddingHorizontal: 5,
+                  borderRadius: 5,
+                  backgroundColor: selectedHeart === 5 ? "#4FBCDD" : "#f8f8f8",
+                }}
+                onPress={() => setSelectedHeartt(5)}
+              >
+                <Text
+                  style={{
+                    fontWeight: "bold",
+                    color: selectedHeart === 5 ? "white" : "black",
+                  }}
+                >
+                  5
+                </Text>
+                <AntDesign
+                  style={{ marginHorizontal: 5 }}
+                  name="heart"
+                  size={15}
+                  color="#F70000"
+                />
+              </TouchableOpacity>
+            </View>
+          )}
+
           <FlatList
-            data={reviews}
+            data={selectedHeart === "all" ? reviews : filteredReviews}
             renderItem={renderReview}
             keyExtractor={(item, index) => index}
           />
@@ -179,6 +428,8 @@ export default function Reviews({ route }) {
           flex: 1,
           justifyContent: "center",
           alignItems: "center",
+          minHeight: 60,
+          paddingVertical: 20,
         }}
       >
         <View
@@ -212,6 +463,17 @@ export default function Reviews({ route }) {
               }}
             />
             <TouchableOpacity
+              onPress={handleUploadPhoto}
+              style={{
+                backgroundColor: "black",
+                padding: 5,
+                marginRight: 5,
+                borderRadius: 100,
+              }}
+            >
+              <AntDesign name="camera" size={20} color="white" />
+            </TouchableOpacity>
+            <TouchableOpacity
               onPress={handleReviewSend}
               style={{
                 backgroundColor: "#4FBCDD",
@@ -223,6 +485,25 @@ export default function Reviews({ route }) {
               <Text style={{ color: "white", fontWeight: "bold" }}>Submit</Text>
             </TouchableOpacity>
           </View>
+        </View>
+        <View
+          style={{
+            justifyContent: "center",
+            alignItems: "flex-start",
+            width: "100%",
+          }}
+        >
+          {photoUrl && (
+            <Image
+              source={{ uri: photoUrl }}
+              style={{
+                width: 50,
+                height: 50,
+                marginLeft: 20,
+                marginVertical: 5,
+              }}
+            />
+          )}
         </View>
         <View
           style={{

@@ -22,7 +22,7 @@ import { collection, onSnapshot } from "firebase/firestore";
 //Redux
 import { useSelector, useDispatch } from "react-redux";
 import { Store } from "../redux/store";
-import { fetchUser } from "../redux/actions";
+import { fetchUser, getProducts } from "../redux/actions";
 import Loading from "../components/loading";
 import LoginLoading from "../components/loginLoading";
 
@@ -30,29 +30,16 @@ export default function Home({ navigation }) {
   const user = auth;
 
   //Redux state
-
   const dispatch = useDispatch();
   const { currentUser } = useSelector((state) => state.mainReducer);
+  const { products: itemDATA } = useSelector((state) => state.mainReducer);
 
   //State
-
-  const [itemDATA, setItemDATA] = useState([]);
   const [refreshing, setRefreshing] = useState(false);
   const [loading, setLoading] = useState();
 
-  const getProducts = async () => {
-    const productsRef = collection(db, "products");
-    onSnapshot(productsRef, (snapshot) => {
-      const products = [];
-      snapshot.docs.forEach((doc) => {
-        products.push({ ...doc.data(), docID: doc.id });
-      });
-      setItemDATA(products);
-    });
-  };
-
   useEffect(() => {
-    getProducts();
+    dispatch(getProducts());
     dispatch(fetchUser(userCol, user));
   }, []);
 
@@ -82,7 +69,6 @@ export default function Home({ navigation }) {
             width: Dimensions.get("window").width * 0.3,
             minHeight: Dimensions.get("window").width * 0.5,
             backgroundColor: "white",
-            borderRadius: 20,
             padding: 5,
             margin: 5,
             shadowColor: "#000",
@@ -157,14 +143,14 @@ export default function Home({ navigation }) {
               </View>
             </View>
 
-            <Text style={{ color: "gray", marginVertical: 2, fontSize: 7 }}>
+            <Text style={{ color: "black", marginVertical: 2, fontSize: 7 }}>
               Seller:{" "}
               <Text style={{ fontWeight: "bold" }}>
                 {item.owner.firstName + " " + item.owner.lastName}
               </Text>
             </Text>
             {item.createdAt && (
-              <Text style={{ color: "gray", marginVertical: 2, fontSize: 7 }}>
+              <Text style={{ color: "black", marginVertical: 2, fontSize: 7 }}>
                 Listed:{" "}
                 <Text style={{ fontWeight: "bold" }}>
                   {item.createdAt.toDate().toDateString()}
@@ -178,7 +164,7 @@ export default function Home({ navigation }) {
   };
 
   const onRefresh = () => {
-    getProducts();
+    dispatch(getProducts());
   };
 
   if (Object.keys(currentUser).length === 0) {

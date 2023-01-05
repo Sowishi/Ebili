@@ -15,11 +15,13 @@ import {
 import React, { useEffect } from "react";
 import { SafeAreaView } from "react-native-safe-area-context";
 import { FontAwesome } from "@expo/vector-icons";
+import { MaterialIcons } from "@expo/vector-icons";
+
 import { useState } from "react";
 import Toast from "react-native-toast-message";
 import { TextInput } from "react-native-gesture-handler";
 import { db } from "../firebaseConfig";
-import { updateDoc, doc, collection, addDoc } from "firebase/firestore";
+import { updateDoc, doc, collection, addDoc, getDoc } from "firebase/firestore";
 import Loading from "../components/loading";
 import { useSelector } from "react-redux";
 
@@ -29,6 +31,7 @@ export default function ViewItem({ route, navigation }) {
   const [addCart, setAddCart] = useState(false);
   const [bid, setBid] = useState();
   const [quantity, setQuantity] = useState(1);
+  const [owner, setOwner] = useState();
 
   const showSuccessToast = (text) => {
     setAddCart(false);
@@ -47,7 +50,7 @@ export default function ViewItem({ route, navigation }) {
   };
 
   const handleBid = () => {
-    if (currentUser.docID === data.owner.docID) {
+    if (currentUser.docID === owner.docID) {
       showErrorToast("You. cannot bid in your own item!");
     } else if (parseInt(bid) < data.price) {
       showErrorToast("Your bid must be higher than the current price/bid");
@@ -77,7 +80,21 @@ export default function ViewItem({ route, navigation }) {
     });
   };
 
+  const fetchOwner = () => {
+    const ownerRef = doc(db, "users", data.owner.docID);
+    getDoc(ownerRef)
+      .then((snapshot) => {
+        console.log(snapshot.data());
+        setOwner(snapshot.data());
+      })
+      .catch((err) => {
+        console.log(err);
+      });
+  };
+
   useEffect(() => {
+    fetchOwner();
+
     const backHandler = BackHandler.addEventListener(
       "hardwareBackPress",
       () => {
@@ -87,6 +104,10 @@ export default function ViewItem({ route, navigation }) {
     );
     return () => backHandler.remove();
   }, []);
+
+  if (owner === undefined) {
+    return <Loading />;
+  }
 
   return (
     <SafeAreaView style={{ flex: 1 }}>
@@ -284,10 +305,11 @@ export default function ViewItem({ route, navigation }) {
             style={{
               flexDirection: "row",
               justifyContent: "space-between",
+              alignItems: "center",
             }}
           >
             <View style={{ width: "70%" }}>
-              <Text style={{ fontSize: 23, fontWeight: "bold" }}>
+              <Text style={{ fontSize: 30, fontWeight: "bold" }}>
                 {data.title}
               </Text>
             </View>
@@ -295,7 +317,10 @@ export default function ViewItem({ route, navigation }) {
               <Text
                 style={{ fontSize: 30, fontWeight: "bold", color: "#0096be" }}
               >
-                ₱{data.price.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ",")}
+                ₱
+                {parseInt(
+                  data.price.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ",")
+                ).toFixed(2)}
               </Text>
             </View>
           </View>
@@ -318,13 +343,13 @@ export default function ViewItem({ route, navigation }) {
                 justifyContent: "flex-start",
               }}
             >
-              {currentUser ? (
+              {currentUser && owner ? (
                 <Pressable
-                  disabled={data.owner.id === currentUser.id}
-                  onPress={() => navigation.navigate("User", data.owner)}
+                  disabled={owner.id === currentUser.id}
+                  onPress={() => navigation.navigate("User", owner)}
                 >
                   <Image
-                    source={{ uri: data.owner.photoUrl }}
+                    source={{ uri: owner.photoUrl }}
                     style={{ width: 50, height: 50, borderRadius: 100 }}
                   />
                 </Pressable>
@@ -333,7 +358,7 @@ export default function ViewItem({ route, navigation }) {
               )}
 
               <Text style={{ marginLeft: 5 }}>
-                {data.owner.firstName + " " + data.owner.lastName}
+                {owner.firstName + " " + owner.lastName}
               </Text>
             </View>
           </View>
@@ -377,7 +402,7 @@ export default function ViewItem({ route, navigation }) {
                 fontWeight: "bold",
                 fontSize: 20,
                 marginBottom: 5,
-                fontSize: 15,
+                fontSize: 13,
               }}
             >
               Product/Item Description
@@ -396,10 +421,13 @@ export default function ViewItem({ route, navigation }) {
             <TouchableOpacity
               onPress={() => navigation.navigate("Reviews", data)}
               style={{
-                backgroundColor: "#EFB701",
+                backgroundColor: "#FFDF38",
                 paddingHorizontal: 15,
                 paddingVertical: 5,
                 borderRadius: 5,
+                flexDirection: "row",
+                justifyContent: "center",
+                alignItems: "center",
               }}
             >
               <Text
@@ -409,10 +437,12 @@ export default function ViewItem({ route, navigation }) {
                   marginBottom: 5,
                   fontSize: 15,
                   color: "white",
+                  marginRight: 5,
                 }}
               >
                 See Reviews
               </Text>
+              <MaterialIcons name="rate-review" size={20} color="white" />
             </TouchableOpacity>
           </View>
         </View>
@@ -421,7 +451,7 @@ export default function ViewItem({ route, navigation }) {
           onPress={() => setAddCart(true)}
           style={{
             position: "absolute",
-            bottom: 20,
+            bottom: 0,
             right: 20,
             padding: 15,
             borderRadius: 100,

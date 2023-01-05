@@ -15,7 +15,6 @@ export default function LoginLoading() {
         source={require("../assets/loginLoading.gif")}
         style={{ width: 200, height: 200 }}
       />
-      <Text style={{ fontSize: 20, fontWeight: "bold" }}>Logging In...</Text>
     </View>
   );
 }
