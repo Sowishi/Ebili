@@ -27,6 +27,7 @@ import { db } from "../firebaseConfig";
 import { Toast } from "react-native-toast-message/lib/src/Toast";
 import Loading from "../components/loading";
 import { useSelector } from "react-redux";
+import { Ionicons } from "@expo/vector-icons";
 
 export default function PublicCHat({ navigation }) {
   const { currentUser } = useSelector((state) => state.mainReducer);
@@ -147,9 +148,26 @@ export default function PublicCHat({ navigation }) {
     <SafeAreaView style={{ flex: 1, backgroundColor: "#f8f8f8" }}>
       <Header navigation={navigation} currentUser={currentUser} />
       <View style={{ flex: 1 }}>
-        <Text style={{ fontSize: 25, fontWeight: "bold", textAlign: "center" }}>
-          Public Chat
-        </Text>
+        <View
+          style={{
+            flexDirection: "row",
+            alignItems: "center",
+            justifyContent: "center",
+          }}
+        >
+          <Text
+            style={{
+              fontSize: 25,
+              fontWeight: "bold",
+              textAlign: "center",
+              marginRight: 5,
+            }}
+          >
+            Public Chat
+          </Text>
+          <Ionicons name="people-circle-outline" size={30} color="#4FBCDD" />
+        </View>
+
         {messages ? (
           <View style={{ flex: 6 }}>
             <FlatList

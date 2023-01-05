@@ -274,12 +274,16 @@ export default function User({ navigation, route }) {
               position: "absolute",
               right: 1,
               bottom: 1,
-              backgroundColor: "black",
+              backgroundColor: "#4FBCDD",
               padding: 7,
               borderRadius: 100,
             }}
           >
-            <AntDesign name="camera" size={24} color="white" />
+            <MaterialCommunityIcons
+              name="camera-plus-outline"
+              size={24}
+              color="white"
+            />
           </TouchableOpacity>
         )}
 
@@ -301,7 +305,7 @@ export default function User({ navigation, route }) {
                 <TouchableOpacity
                   onPress={handleUploadProfile}
                   style={{
-                    backgroundColor: "black",
+                    backgroundColor: "#4FBCDD",
                     position: "absolute",
                     padding: 7,
                     borderRadius: 100,
@@ -309,7 +313,11 @@ export default function User({ navigation, route }) {
                     right: 0,
                   }}
                 >
-                  <AntDesign name="camera" size={24} color="white" />
+                  <MaterialCommunityIcons
+                    name="camera-plus-outline"
+                    size={24}
+                    color="white"
+                  />
                 </TouchableOpacity>
               )}
             </View>
@@ -413,15 +421,31 @@ export default function User({ navigation, route }) {
         <View></View>
         {userItem.length >= 1 ? (
           <>
-            <Text
+            <View
               style={{
-                alignSelf: "flex-start",
-                fontSize: 18,
-                marginLeft: 15,
+                flexDirection: "row",
+                justifyContent: "flex-start",
+                alignItems: "center",
+                width: "100%",
               }}
             >
-              {otherUser === undefined ? "Your Items" : "Seller Items"}
-            </Text>
+              <Text
+                style={{
+                  alignSelf: "flex-start",
+                  fontSize: 18,
+                  marginLeft: 15,
+                  marginRight: 5,
+                }}
+              >
+                {otherUser === undefined ? "Your Items" : "Seller Items"}
+              </Text>
+              <MaterialCommunityIcons
+                name="shape-square-rounded-plus"
+                size={24}
+                color="black"
+              />
+            </View>
+
             <FlatList
               contentContainerStyle={{ paddingBottom: 300 }}
               refreshControl={

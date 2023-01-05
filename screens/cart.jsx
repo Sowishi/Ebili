@@ -24,6 +24,8 @@ import { auth, db, userCol } from "../firebaseConfig";
 import Loading from "../components/loading";
 import { Toast } from "react-native-toast-message/lib/src/Toast";
 
+import { Ionicons } from "@expo/vector-icons";
+
 export default function Cart({ navigation, route }) {
   const currentUser = route.params;
 
@@ -178,7 +180,16 @@ export default function Cart({ navigation, route }) {
                   marginLeft: 19,
                 }}
               >
-                <Text style={{ color: "white" }}>Remove</Text>
+                <View
+                  style={{
+                    flexDirection: "row",
+                    justifyContent: "center",
+                    alignItems: "center",
+                  }}
+                >
+                  <Text style={{ color: "white", marginRight: 5 }}>Remove</Text>
+                  <Ionicons name="remove-circle" size={20} color="white" />
+                </View>
               </TouchableHighlight>
             </View>
             <View style={{ flexDirection: "row", justifyContent: "flex-end" }}>
