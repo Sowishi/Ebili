@@ -197,7 +197,7 @@ export default function App() {
           />
 
           <Stack.Screen
-            options={{ headerShown: true, title: "" }}
+            options={{ headerShown: true, title: "Checkout" }}
             name="Checkout"
             component={Checkout}
           />

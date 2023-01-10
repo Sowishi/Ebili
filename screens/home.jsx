@@ -17,14 +17,16 @@ import {
 
 import Header from "../components/header";
 import { auth, db, userCol } from "../firebaseConfig";
-import { collection, onSnapshot } from "firebase/firestore";
+import { collection, onSnapshot, serverTimestamp } from "firebase/firestore";
 
 //Redux
 import { useSelector, useDispatch } from "react-redux";
 import { Store } from "../redux/store";
-import { fetchUser, getProducts } from "../redux/actions";
+import { fetchCart, fetchUser, getProducts } from "../redux/actions";
 import Loading from "../components/loading";
 import LoginLoading from "../components/loginLoading";
+
+import moment from "moment";
 
 export default function Home({ navigation }) {
   const user = auth;
@@ -41,6 +43,7 @@ export default function Home({ navigation }) {
   useEffect(() => {
     dispatch(getProducts());
     dispatch(fetchUser(userCol, user));
+    dispatch(fetchCart(user.currentUser.uid));
   }, []);
 
   useFocusEffect(() => {

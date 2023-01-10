@@ -244,6 +244,7 @@ export default function User({ navigation, route }) {
     setDoc(docRef, { ...currentUser, bio }).then(() => {
       dispatch(fetchUser(userCol, user));
       showSuccessToast();
+      setShowAboutModal(false);
     });
   };
 
@@ -618,7 +619,7 @@ export default function User({ navigation, route }) {
                 </Text>
                 <TextInput
                   onChangeText={(text) => setBio(text)}
-                  placeholder="Enter your new bio"
+                  placeholder={currentUser.bio}
                   style={{
                     borderBottomWidth: 2,
                     width: "90%",

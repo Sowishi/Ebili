@@ -14,11 +14,16 @@ import { Feather } from "@expo/vector-icons";
 import Checkbox from "expo-checkbox";
 import { Toast } from "react-native-toast-message/lib/src/Toast";
 import { addDoc, collection, doc, setDoc } from "firebase/firestore";
-import { db } from "../firebaseConfig";
+import { auth, db, userCol } from "../firebaseConfig";
+import { useDispatch, useSelector } from "react-redux";
+import { fetchUser } from "../redux/actions";
 
 export default function Checkout({ navigation, route }) {
+  const user = auth;
+
   const { toCheckout: productToCheckout } = route.params;
-  const currentUser = productToCheckout[0].owner;
+  const dispatch = useDispatch();
+  const { currentUser } = useSelector((state) => state.mainReducer);
   const totalPrice = route.params.total;
 
   const [paymentMethod, setPaymentMethod] = useState();
@@ -50,17 +55,11 @@ export default function Checkout({ navigation, route }) {
       setPruok(undefined);
 
       const userDoc = doc(db, "users", currentUser.docID);
-      setDoc(
-        userDoc,
-        {
-          address: output,
-        },
-        { merge: true }
-      ).then(() => {
+      setDoc(userDoc, { ...currentUser, address: output }).then(() => {
         showSuccessToast("Setup address successfully");
         setAddress(output);
         setShowAddressModal(false);
-        s;
+        dispatch(fetchUser(userCol, user));
       });
     }
   };
@@ -403,7 +402,11 @@ export default function Checkout({ navigation, route }) {
                     borderRadius: 5,
                   }}
                 >
-                  <Text style={{ color: "white" }}>Add Address</Text>
+                  <Text style={{ color: "white" }}>
+                    {currentUser.address === undefined
+                      ? "Add Address"
+                      : "Edit Address"}
+                  </Text>
                 </TouchableOpacity>
               </View>
             </View>
@@ -439,22 +442,22 @@ export default function Checkout({ navigation, route }) {
               marginRight: 5,
             }}
           >
-            <Text style={{ color: "white" }}>Add address</Text>
+            <Text style={{ color: "white" }}>
+              {" "}
+              {currentUser.address === undefined
+                ? "Add Address"
+                : "Edit Address"}
+            </Text>
           </TouchableOpacity>
         </View>
         <View>
-          {currentUser.address === undefined && address === undefined ? (
+          {currentUser.address === undefined ? (
             <Text style={{ color: "gray", fontSize: 16, textAlign: "center" }}>
               You currently don't have address, add one!
             </Text>
           ) : (
             <Text style={{ color: "gray", fontSize: 16, textAlign: "center" }}>
               {currentUser.address}
-            </Text>
-          )}
-          {address && (
-            <Text style={{ color: "gray", fontSize: 16, textAlign: "center" }}>
-              {address}
             </Text>
           )}
         </View>

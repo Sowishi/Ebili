@@ -16,6 +16,9 @@ export function mainReducer(state=initalState, action){
         case actions.GET_PRODUCT:
             return {...state, products: action.payload.products}
 
+        case actions.FETCH_CART:
+            return {...state, cart: action.payload.cart }
+
         default:
             console.log("default called")
             return state

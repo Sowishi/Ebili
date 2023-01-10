@@ -11,6 +11,8 @@ import { db } from "../firebaseConfig";
 //Action types
 export const FETCH_USER = "FETCH_USER";
 export const GET_PRODUCT = "GET_PRODUCT";
+export const FETCH_CART = "FETCH_CART";
+
 
 export const fetchUser = (userCol, user) => (dispatch) => {
   const q = query(userCol, where("id", "==", user.currentUser.uid));
@@ -48,3 +50,28 @@ export const getProducts = () => (dispatch) => {
     });
   });
 };
+
+export const fetchCart = (userID) => (dispatch) => {
+
+  const cartsRef = collection(db, "carts");
+  onSnapshot(cartsRef, (snapshot) => {
+    const carts = [];
+    snapshot.docs.forEach((doc) => {
+      carts.push({ ...doc.data(), id: doc.id });
+    });
+    const filteredCarts = carts.filter((i) => {
+      if (i.owner.id === userID) {
+        return i;
+      }
+    })
+   
+  dispatch({
+    type: FETCH_CART,
+    payload: {
+      cart: filteredCarts
+    }
+  })
+  });
+
+
+}

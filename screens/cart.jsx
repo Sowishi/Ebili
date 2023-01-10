@@ -25,13 +25,16 @@ import Loading from "../components/loading";
 import { Toast } from "react-native-toast-message/lib/src/Toast";
 
 import { Ionicons } from "@expo/vector-icons";
+import { useDispatch, useSelector } from "react-redux";
+import { fetchCart } from "../redux/actions";
 
 export default function Cart({ navigation, route }) {
-  const currentUser = route.params;
+  const dispatch = useDispatch();
+  const { cart: userCart } = useSelector((state) => state.mainReducer);
+  const { currentUser } = useSelector((state) => state.mainReducer);
 
+  const [cart, setCart] = useState(userCart);
   const [selectAll, setSelectAll] = useState(false);
-
-  const [cart, setCart] = useState();
 
   const handleIncreament = (item) => {
     const data = [...cart];
@@ -99,6 +102,14 @@ export default function Cart({ navigation, route }) {
         type: "success",
         text1: "Deleted Successfully",
       });
+
+      const data = [...cart];
+      const newData = data.filter((i) => {
+        if (i.id !== item.id) {
+          return i;
+        }
+      });
+      setCart(newData);
     });
   };
 
@@ -220,24 +231,7 @@ export default function Cart({ navigation, route }) {
     );
   };
 
-  const fetchCarts = () => {
-    const cartsRef = collection(db, "carts");
-    onSnapshot(cartsRef, (snapshot) => {
-      const carts = [];
-      snapshot.docs.forEach((doc) => {
-        carts.push({ ...doc.data(), id: doc.id });
-      });
-      const filteredCarts = carts.filter((i) => {
-        if (i.owner.id === currentUser.id) {
-          return i;
-        }
-      });
-      setCart(filteredCarts);
-    });
-  };
-
   useEffect(() => {
-    fetchCarts();
     const backHandler = BackHandler.addEventListener(
       "hardwareBackPress",
       () => {

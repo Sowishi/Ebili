@@ -1,10 +1,19 @@
-import { View, TouchableOpacity, Image, ActivityIndicator } from "react-native";
+import {
+  View,
+  TouchableOpacity,
+  Image,
+  ActivityIndicator,
+  Text,
+} from "react-native";
 import React from "react";
 import { Entypo } from "@expo/vector-icons";
 import AuthTextInput from "./AuthTextInput";
 import { MaterialCommunityIcons } from "@expo/vector-icons";
+import { useSelector } from "react-redux";
 
 export default function Header({ navigation, currentUser }) {
+  const { cart } = useSelector((state) => state.mainReducer);
+
   return (
     <View
       style={{
@@ -59,6 +68,7 @@ export default function Header({ navigation, currentUser }) {
                 borderRadius: 100,
                 padding: 6,
                 marginRight: 10,
+                position: "relative",
               }}
             >
               <MaterialCommunityIcons
@@ -66,6 +76,25 @@ export default function Header({ navigation, currentUser }) {
                 size={24}
                 color="#4FBCDD"
               />
+              <View
+                style={{
+                  backgroundColor: "red",
+                  position: "absolute",
+                  height: 20,
+                  width: 20,
+                  borderRadius: 500,
+                  right: -5,
+                  top: -5,
+                  justifyContent: "center",
+                  alignItems: "center",
+                }}
+              >
+                {cart && (
+                  <Text style={{ color: "white", fontWeight: "bold" }}>
+                    {cart.length}
+                  </Text>
+                )}
+              </View>
             </View>
           </TouchableOpacity>
           <TouchableOpacity onPress={() => navigation.navigate("User")}>
