@@ -5,6 +5,7 @@ import {
   onSnapshot,
   query,
   where,
+  orderBy
 } from "firebase/firestore";
 import { db } from "../firebaseConfig";
 
@@ -12,6 +13,7 @@ import { db } from "../firebaseConfig";
 export const FETCH_USER = "FETCH_USER";
 export const GET_PRODUCT = "GET_PRODUCT";
 export const FETCH_CART = "FETCH_CART";
+export const FETCH_ACTIVITY = "FETCH_ACTIVITY";
 
 
 export const fetchUser = (userCol, user) => (dispatch) => {
@@ -72,6 +74,32 @@ export const fetchCart = (userID) => (dispatch) => {
     }
   })
   });
+}
+
+
+export const fetchActiviy = (currentUser) => dispatch => {
+
+  const activityRef = collection(db, "activities");
+
+  const q =  query(activityRef, orderBy("createdAt", "desc"), where("ownerID", "==", currentUser.id))
+
+  onSnapshot(q, snapshot => {
+
+    const activities = []
+    snapshot.docs.map(i => {
+      activities.push(i.data())
+    })
+
+    dispatch({
+      type: FETCH_ACTIVITY,
+      payload: {
+        activities
+
+      }
+    })
+
+
+  })
 
 
 }

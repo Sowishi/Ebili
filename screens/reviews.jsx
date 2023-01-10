@@ -27,6 +27,8 @@ import { storage } from "../firebaseConfig";
 import { ref, uploadBytes, getDownloadURL } from "@firebase/storage";
 import * as ImagePicker from "expo-image-picker";
 
+import moment from "moment";
+
 export default function Reviews({ route }) {
   const data = route.params;
 
@@ -46,6 +48,8 @@ export default function Reviews({ route }) {
     } else {
       const productDoc = doc(db, "products", data.docID);
       const reviewsRef = collection(productDoc, "reviews");
+      const activityRef = collection(db, "activities");
+
       addDoc(reviewsRef, {
         user: currentUser,
         text: text,
@@ -54,6 +58,16 @@ export default function Reviews({ route }) {
         createdAt: serverTimestamp(),
       })
         .then(() => {
+          addDoc(activityRef, {
+            text: text,
+            rate: heart,
+            item: data,
+            ownerID: data.owner.id,
+            owner: data.owner,
+            user: currentUser,
+            createdAt: serverTimestamp(),
+            type: "review",
+          });
           showSuccessToast("Thank you for your review!");
         })
         .catch((e) => {
@@ -139,9 +153,13 @@ export default function Reviews({ route }) {
                 fontSize: 10,
               }}
             >
+              {/* {item.createdAt !== undefined &&
+                item.createdAt !== null &&
+                item.createdAt.toDate().toDateString()} */}
+
               {item.createdAt !== undefined &&
                 item.createdAt !== null &&
-                item.createdAt.toDate().toDateString()}
+                moment(item.createdAt.toDate()).calendar()}
             </Text>
           </View>
 

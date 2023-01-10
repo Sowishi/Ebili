@@ -156,7 +156,7 @@ export default function Home({ navigation }) {
               <Text style={{ color: "black", marginVertical: 2, fontSize: 7 }}>
                 Listed:{" "}
                 <Text style={{ fontWeight: "bold" }}>
-                  {item.createdAt.toDate().toDateString()}
+                  {moment(item.createdAt.toDate()).calendar()}
                 </Text>
               </Text>
             )}
@@ -169,10 +169,6 @@ export default function Home({ navigation }) {
   const onRefresh = () => {
     dispatch(getProducts());
   };
-
-  if (Object.keys(currentUser).length === 0) {
-    return <LoginLoading />;
-  }
 
   return (
     <SafeAreaView style={{ backgroundColor: "#f8f8f8", flex: 1 }}>

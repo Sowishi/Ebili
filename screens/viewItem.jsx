@@ -16,22 +16,33 @@ import React, { useEffect } from "react";
 import { SafeAreaView } from "react-native-safe-area-context";
 import { FontAwesome } from "@expo/vector-icons";
 import { MaterialIcons } from "@expo/vector-icons";
+import { MaterialCommunityIcons } from "@expo/vector-icons";
 
 import { useState } from "react";
 import Toast from "react-native-toast-message";
 import { TextInput } from "react-native-gesture-handler";
 import { db } from "../firebaseConfig";
-import { updateDoc, doc, collection, addDoc, getDoc } from "firebase/firestore";
+import {
+  updateDoc,
+  doc,
+  collection,
+  addDoc,
+  getDoc,
+  serverTimestamp,
+} from "firebase/firestore";
 import Loading from "../components/loading";
 import { useSelector } from "react-redux";
+import moment from "moment";
 
 export default function ViewItem({ route, navigation }) {
   const { currentUser } = useSelector((state) => state.mainReducer);
   const data = route.params;
+
   const [addCart, setAddCart] = useState(false);
   const [bid, setBid] = useState();
   const [quantity, setQuantity] = useState(1);
   const [owner, setOwner] = useState();
+  // const [data, setData] = useState();
 
   const showSuccessToast = (text) => {
     setAddCart(false);
@@ -50,6 +61,8 @@ export default function ViewItem({ route, navigation }) {
   };
 
   const handleBid = () => {
+    const activityRef = collection(db, "activities");
+
     if (currentUser.docID === owner.docID) {
       showErrorToast("You. cannot bid in your own item!");
     } else if (parseInt(bid) < data.price) {
@@ -62,6 +75,15 @@ export default function ViewItem({ route, navigation }) {
         currentBidder: currentUser.firstName + " " + currentUser.lastName,
         bidAmount: parseInt(bid),
       }).then(() => {
+        addDoc(activityRef, {
+          bidAmount: parseInt(bid),
+          item: data,
+          ownerID: data.owner.id,
+          owner: data.owner,
+          user: currentUser,
+          createdAt: serverTimestamp(),
+          type: "bid",
+        });
         showSuccessToast("Your bid is place successfully!");
       });
     }
@@ -84,13 +106,23 @@ export default function ViewItem({ route, navigation }) {
     const ownerRef = doc(db, "users", data.owner.docID);
     getDoc(ownerRef)
       .then((snapshot) => {
-        console.log(snapshot.data());
         setOwner(snapshot.data());
       })
       .catch((err) => {
         console.log(err);
       });
   };
+
+  // const fetchProduct = () => {
+  //   const productRef = doc(db, "products", passedData.docID);
+  //   getDoc(productRef)
+  //     .then((snapshot) => {
+  //       setData(snapshot.data());
+  //     })
+  //     .catch((err) => {
+  //       console.log(err);
+  //     });
+  // };
 
   useEffect(() => {
     fetchOwner();
@@ -105,7 +137,7 @@ export default function ViewItem({ route, navigation }) {
     return () => backHandler.remove();
   }, []);
 
-  if (owner === undefined) {
+  if (owner === undefined || data === undefined) {
     return <Loading />;
   }
 
@@ -303,24 +335,27 @@ export default function ViewItem({ route, navigation }) {
         <View style={{ margin: 30 }}>
           <View
             style={{
-              flexDirection: "row",
-              justifyContent: "space-between",
-              alignItems: "center",
+              flexDirection: "column",
+              justifyContent: "center",
+              alignItems: "flex-start",
             }}
           >
-            <View style={{ width: "70%" }}>
+            <View>
               <Text style={{ fontSize: 30, fontWeight: "bold" }}>
                 {data.title}
               </Text>
             </View>
-            <View style={{ justifyContent: "center", alignItems: "center" }}>
+            <View
+              style={{
+                justifyContent: "center",
+                alignItems: "center",
+                flex: 1,
+              }}
+            >
               <Text
                 style={{ fontSize: 30, fontWeight: "bold", color: "#0096be" }}
               >
-                ₱
-                {parseInt(
-                  data.price.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ",")
-                ).toFixed(2)}
+                ₱{data.price.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ",")}
               </Text>
             </View>
           </View>
@@ -383,7 +418,7 @@ export default function ViewItem({ route, navigation }) {
                 Listed on:{" "}
                 {data && (
                   <Text style={{ fontWeight: "bold", color: "#0096be" }}>
-                    {data.createdAt.toDate().toDateString()}
+                    {moment(data.createdAt.toDate()).calendar()}
                   </Text>
                 )}
               </Text>
@@ -419,7 +454,9 @@ export default function ViewItem({ route, navigation }) {
             }}
           >
             <TouchableOpacity
-              onPress={() => navigation.navigate("Reviews", data)}
+              onPress={() => {
+                navigation.navigate("Reviews", data);
+              }}
               style={{
                 backgroundColor: "#FFDF38",
                 paddingHorizontal: 15,
@@ -451,7 +488,7 @@ export default function ViewItem({ route, navigation }) {
           onPress={() => setAddCart(true)}
           style={{
             position: "absolute",
-            bottom: 0,
+            bottom: 10,
             right: 20,
             padding: 15,
             borderRadius: 100,
@@ -460,7 +497,11 @@ export default function ViewItem({ route, navigation }) {
             alignItems: "center",
           }}
         >
-          <FontAwesome name="cart-plus" size={24} color="white" />
+          {data.sellType === "bidding" ? (
+            <MaterialCommunityIcons name="gavel" size={24} color="white" />
+          ) : (
+            <FontAwesome name="cart-plus" size={24} color="white" />
+          )}
         </Pressable>
       </ScrollView>
     </SafeAreaView>

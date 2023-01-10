@@ -58,6 +58,7 @@ import { Provider } from "react-redux";
 
 
 import { Image, Text, View } from "react-native";
+import SellerActivity from "./screens/sellerActivity";
 
 
 
@@ -135,8 +136,8 @@ export default function App() {
           options={{ title: "SWITCH TO SELLING",  drawerIcon: ({focused, size}) => (
             <FontAwesome name="tag" size={size} color={focused ? "black" : "white"} />
          ), }}
-          name="Sell"
-          component={Sell}
+          name="SellerActivity"
+          component={SellerActivity}
         />
         <Drawer.Screen
           options={{ title: "SETTINGS", 
@@ -178,6 +179,8 @@ export default function App() {
           <Stack.Screen name="Registration" component={Registration} />
           <Stack.Screen name="Drawer" component={DrawerTab} />
           <Stack.Screen name="ViewItem" component={ViewItem} />
+          <Stack.Screen name="Sell" options={{headerShown: true, title: "Sell an item!"}} component={Sell} />
+
 
           <Stack.Screen name="User" component={User} />
 
