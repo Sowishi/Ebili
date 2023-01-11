@@ -1,5 +1,13 @@
-import { View, Text, FlatList, Image, TouchableOpacity } from "react-native";
-import React, { useEffect } from "react";
+import {
+  View,
+  Text,
+  FlatList,
+  Image,
+  TouchableOpacity,
+  BackHandler,
+  RefreshControl,
+} from "react-native";
+import React, { useEffect, useState } from "react";
 import { SafeAreaView } from "react-native-safe-area-context";
 import Header from "../components/header";
 import { useDispatch, useSelector } from "react-redux";
@@ -15,8 +23,23 @@ export default function SellerActivity({ navigation }) {
   const { currentUser } = useSelector((state) => state.mainReducer);
   const { activities } = useSelector((state) => state.mainReducer);
 
+  const [loading, setLoading] = useState(false);
+
+  const getActivity = () => {
+    setLoading(true);
+    dispatch(fetchActiviy(currentUser.id));
+    setLoading(false);
+  };
+
   useEffect(() => {
-    dispatch(fetchActiviy(currentUser));
+    const backHandler = BackHandler.addEventListener(
+      "hardwareBackPress",
+      () => {
+        navigation.goBack();
+        return true;
+      }
+    );
+    return () => backHandler.remove();
   }, []);
 
   const renderActivity = ({ item }) => {
@@ -153,6 +176,9 @@ export default function SellerActivity({ navigation }) {
       </View>
 
       <FlatList
+        refreshControl={
+          <RefreshControl refreshing={loading} onRefresh={getActivity} />
+        }
         data={activities}
         keyExtractor={(item, index) => index}
         renderItem={renderActivity}

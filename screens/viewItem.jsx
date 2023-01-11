@@ -36,13 +36,13 @@ import moment from "moment";
 
 export default function ViewItem({ route, navigation }) {
   const { currentUser } = useSelector((state) => state.mainReducer);
-  const data = route.params;
+  const passedData = route.params;
 
   const [addCart, setAddCart] = useState(false);
   const [bid, setBid] = useState();
   const [quantity, setQuantity] = useState(1);
   const [owner, setOwner] = useState();
-  // const [data, setData] = useState();
+  const [data, setData] = useState();
 
   const showSuccessToast = (text) => {
     setAddCart(false);
@@ -84,6 +84,7 @@ export default function ViewItem({ route, navigation }) {
           createdAt: serverTimestamp(),
           type: "bid",
         });
+        fetchProduct();
         showSuccessToast("Your bid is place successfully!");
       });
     }
@@ -103,7 +104,7 @@ export default function ViewItem({ route, navigation }) {
   };
 
   const fetchOwner = () => {
-    const ownerRef = doc(db, "users", data.owner.docID);
+    const ownerRef = doc(db, "users", passedData.owner.docID);
     getDoc(ownerRef)
       .then((snapshot) => {
         setOwner(snapshot.data());
@@ -113,19 +114,20 @@ export default function ViewItem({ route, navigation }) {
       });
   };
 
-  // const fetchProduct = () => {
-  //   const productRef = doc(db, "products", passedData.docID);
-  //   getDoc(productRef)
-  //     .then((snapshot) => {
-  //       setData(snapshot.data());
-  //     })
-  //     .catch((err) => {
-  //       console.log(err);
-  //     });
-  // };
+  const fetchProduct = () => {
+    const productRef = doc(db, "products", passedData.docID);
+    getDoc(productRef)
+      .then((snapshot) => {
+        setData({ ...snapshot.data(), docID: snapshot.id });
+      })
+      .catch((err) => {
+        console.log(err);
+      });
+  };
 
   useEffect(() => {
     fetchOwner();
+    fetchProduct();
 
     const backHandler = BackHandler.addEventListener(
       "hardwareBackPress",

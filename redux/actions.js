@@ -77,11 +77,11 @@ export const fetchCart = (userID) => (dispatch) => {
 }
 
 
-export const fetchActiviy = (currentUser) => dispatch => {
+export const fetchActiviy = (userID) => dispatch => {
 
   const activityRef = collection(db, "activities");
 
-  const q =  query(activityRef, orderBy("createdAt", "desc"), where("ownerID", "==", currentUser.id))
+  const q =  query(activityRef, orderBy("createdAt", "desc"), where("ownerID", "==", userID))
 
   onSnapshot(q, snapshot => {
 

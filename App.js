@@ -1,4 +1,3 @@
-
 // Navigators
 
 import { NavigationContainer } from "@react-navigation/native";
@@ -10,7 +9,6 @@ import {
   DrawerItemList,
 } from "@react-navigation/drawer";
 import { createMaterialTopTabNavigator } from "@react-navigation/material-top-tabs";
-
 
 // Screens
 
@@ -32,39 +30,26 @@ import OrderCompleted from "./screens/orderCompleted";
 import OrderConfirmed from "./screens/orderConfirmed";
 import Logout from "./screens/logout";
 
-
-
-
 // Firebase
 import { auth } from "./firebaseConfig";
-
 
 //Dependecies
 import Toast from "react-native-toast-message";
 
-
 // Icons
-import { FontAwesome } from '@expo/vector-icons'; 
-import { FontAwesome5 } from '@expo/vector-icons'; 
-import { Entypo } from '@expo/vector-icons'; 
-import { MaterialCommunityIcons } from '@expo/vector-icons'; 
-
-
+import { FontAwesome } from "@expo/vector-icons";
+import { FontAwesome5 } from "@expo/vector-icons";
+import { Entypo } from "@expo/vector-icons";
+import { MaterialCommunityIcons } from "@expo/vector-icons";
 
 //Redux
 import { Store } from "./redux/store";
 import { Provider } from "react-redux";
 
-
-
 import { Image, Text, View } from "react-native";
 import SellerActivity from "./screens/sellerActivity";
 
-
-
 export default function App() {
-
-
   //Navigators instance
 
   const Stack = createStackNavigator();
@@ -74,7 +59,6 @@ export default function App() {
   const handleSIgnOut = (props) => {
     console.log(props);
   };
-  
 
   function CustomDrawerContent(props) {
     return (
@@ -88,7 +72,6 @@ export default function App() {
         </View>
 
         <DrawerItemList {...props} />
-      
       </DrawerContentScrollView>
     );
   }
@@ -105,7 +88,7 @@ export default function App() {
   const DrawerTab = ({ navigation }) => {
     return (
       <Drawer.Navigator
-        drawerContent={(props) => <CustomDrawerContent  {...props} />}
+        drawerContent={(props) => <CustomDrawerContent {...props} />}
         screenOptions={{
           headerShown: false,
           drawerStyle: {
@@ -117,53 +100,86 @@ export default function App() {
           drawerActiveBackgroundColor: "#EFB701",
         }}
       >
-        <Drawer.Screen name="HOME" component={Home} options={
-          {
-            drawerIcon: ({focused, size}) => (
-              <FontAwesome name="home" size={size} color={focused ? "black" : "white"} />
-           ),
-          }
-        } />
         <Drawer.Screen
-          options={{ title: "PUBLIC CHAT", 
-          drawerIcon: ({focused, size}) => (
-            <FontAwesome name="wechat" size={size} color={focused ? "black" : "white"} />
-         ), }}
+          name="HOME"
+          component={Home}
+          options={{
+            drawerIcon: ({ focused, size }) => (
+              <FontAwesome
+                name="home"
+                size={size}
+                color={focused ? "black" : "white"}
+              />
+            ),
+          }}
+        />
+        <Drawer.Screen
+          options={{
+            title: "PUBLIC CHAT",
+            drawerIcon: ({ focused, size }) => (
+              <FontAwesome
+                name="wechat"
+                size={size}
+                color={focused ? "black" : "white"}
+              />
+            ),
+          }}
           name="PublicChat"
           component={PublicCHat}
         />
         <Drawer.Screen
-          options={{ title: "SWITCH TO SELLING",  drawerIcon: ({focused, size}) => (
-            <FontAwesome name="tag" size={size} color={focused ? "black" : "white"} />
-         ), }}
+          options={{
+            title: "SWITCH TO SELLING",
+            drawerIcon: ({ focused, size }) => (
+              <FontAwesome
+                name="tag"
+                size={size}
+                color={focused ? "black" : "white"}
+              />
+            ),
+          }}
           name="SellerActivity"
           component={SellerActivity}
         />
         <Drawer.Screen
-          options={{ title: "SETTINGS", 
-          drawerIcon: ({focused, size}) => (
-            <FontAwesome name="gear" size={size} color={focused ? "black" : "white"} />
-         ),}}
+          options={{
+            title: "SETTINGS",
+            drawerIcon: ({ focused, size }) => (
+              <FontAwesome
+                name="gear"
+                size={size}
+                color={focused ? "black" : "white"}
+              />
+            ),
+          }}
           name="User"
           component={User}
         />
 
         <Drawer.Screen
-          options={{ title: "ORDERS", headerShown: true, 
-          drawerIcon: ({focused, size}) => (
-            <FontAwesome5 name="box" size={size} color={focused ? "black" : "white"} />
-         ), }}
+          options={{
+            title: "ORDERS",
+            headerShown: true,
+            drawerIcon: ({ focused, size }) => (
+              <FontAwesome5
+                name="box"
+                size={size}
+                color={focused ? "black" : "white"}
+              />
+            ),
+          }}
           name="OrderTab"
           component={OrderTab}
         />
-         <Drawer.Screen
-         
-          options={{ title: "LOGOUT", headerShown: false, drawerItemStyle: {backgroundColor: "#870000"},
-        drawerIcon: () => {
-          return( 
-            <Entypo name="log-out" size={24} color="white" />
-          )
-        } }}
+        <Drawer.Screen
+          options={{
+            title: "LOGOUT",
+            headerShown: false,
+            drawerItemStyle: { backgroundColor: "#870000" },
+            drawerIcon: () => {
+              return <Entypo name="log-out" size={24} color="white" />;
+            },
+          }}
           name="Logout"
           component={Logout}
         />
@@ -179,8 +195,11 @@ export default function App() {
           <Stack.Screen name="Registration" component={Registration} />
           <Stack.Screen name="Drawer" component={DrawerTab} />
           <Stack.Screen name="ViewItem" component={ViewItem} />
-          <Stack.Screen name="Sell" options={{headerShown: true, title: "Sell an item!"}} component={Sell} />
-
+          <Stack.Screen
+            name="Sell"
+            options={{ headerShown: true, title: "Sell an item!" }}
+            component={Sell}
+          />
 
           <Stack.Screen name="User" component={User} />
 
@@ -216,16 +235,33 @@ export default function App() {
           />
           <Stack.Screen
             name="Cart"
-          
             options={{
               headerTitle: () => {
                 return (
-                  <View style={{flexDirection: "row", justifyContent: "center", alignItems: "center"}}>
-                    <Text style={{fontSize: 20, fontWeight: "bold", color: "#4FBCDD", marginRight: 5}}>Shopping Cart</Text>
-                    <MaterialCommunityIcons name="cart-variant" size={20} color="#4FBCDD" /> 
+                  <View
+                    style={{
+                      flexDirection: "row",
+                      justifyContent: "center",
+                      alignItems: "center",
+                    }}
+                  >
+                    <Text
+                      style={{
+                        fontSize: 20,
+                        fontWeight: "bold",
+                        color: "#4FBCDD",
+                        marginRight: 5,
+                      }}
+                    >
+                      Shopping Cart
+                    </Text>
+                    <MaterialCommunityIcons
+                      name="cart-variant"
+                      size={20}
+                      color="#4FBCDD"
+                    />
                   </View>
-                )
-
+                );
               },
 
               headerShown: true,
