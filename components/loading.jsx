@@ -1,11 +1,11 @@
-import { View, Text, ActivityIndicator } from "react-native";
+import { View, Text, ActivityIndicator, Image } from "react-native";
 import React from "react";
 
 export default function Loading() {
   return (
     <View
       style={{
-        backgroundColor: "#4FBCDD99",
+        backgroundColor: "white",
         flex: 1,
         justifyContent: "center",
         alignItems: "center",
@@ -17,10 +17,10 @@ export default function Loading() {
         top: 0,
       }}
     >
-      <ActivityIndicator size="large" color="white" />
-      <Text style={{ color: "white", fontWeight: "bold", fontSize: 20 }}>
-        Loading
-      </Text>
+      <Image
+        source={require("../assets/loginLoading.gif")}
+        style={{ width: 200, height: 200 }}
+      />
     </View>
   );
 }

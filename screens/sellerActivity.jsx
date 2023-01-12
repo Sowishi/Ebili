@@ -32,6 +32,7 @@ export default function SellerActivity({ navigation }) {
   };
 
   useEffect(() => {
+    getActivity();
     const backHandler = BackHandler.addEventListener(
       "hardwareBackPress",
       () => {

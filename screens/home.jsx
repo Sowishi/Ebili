@@ -13,6 +13,7 @@ import {
   RefreshControl,
   BackHandler,
   Alert,
+  Modal,
 } from "react-native";
 
 import Header from "../components/header";
@@ -39,6 +40,7 @@ export default function Home({ navigation }) {
   //State
   const [refreshing, setRefreshing] = useState(false);
   const [loading, setLoading] = useState();
+  const [confirmModal, setConfirmModal] = useState(false);
 
   useEffect(() => {
     dispatch(getProducts());
@@ -46,20 +48,15 @@ export default function Home({ navigation }) {
     dispatch(fetchCart(user.currentUser.uid));
   }, []);
 
+  const confirmExit = () => {
+    setConfirmModal(true);
+    return true;
+  };
+
   useFocusEffect(() => {
     const backHandler = BackHandler.addEventListener(
       "hardwareBackPress",
-      () => {
-        Alert.alert("Ebili", "Are you sure you want to exit?", [
-          {
-            text: "Cancel",
-            onPress: () => {},
-            style: "cancel",
-          },
-          { text: "OK", onPress: () => BackHandler.exitApp() },
-        ]);
-        return true;
-      }
+      confirmExit
     );
     return () => backHandler.remove();
   });
@@ -172,6 +169,90 @@ export default function Home({ navigation }) {
 
   return (
     <SafeAreaView style={{ backgroundColor: "#f8f8f8", flex: 1 }}>
+      <Modal
+        animationType="fade"
+        transparent={true}
+        visible={confirmModal}
+        onRequestClose={() => {
+          setConfirmModal(!confirmModal);
+        }}
+      >
+        <View
+          style={{
+            flex: 1,
+            justifyContent: "center",
+            alignItems: "center",
+          }}
+        >
+          <View
+            style={{
+              width: "80%",
+              minHeight: 175,
+              backgroundColor: "#4FBCDD",
+              borderRadius: 30,
+              justifyContent: "center",
+              alignItems: "center",
+              position: "relative",
+            }}
+          >
+            <Image
+              resizeMode="contain"
+              source={require("../assets/ebili-cover.png")}
+              style={{
+                width: 100,
+                height: 100,
+                marginTop: -40,
+              }}
+            />
+            <Text
+              style={{
+                fontSize: 20,
+                marginTop: -20,
+                color: "white",
+                fontWeight: "bold",
+              }}
+            >
+              Are you sure you want to exit?
+            </Text>
+            <View
+              style={{
+                marginTop: 15,
+                flexDirection: "row",
+                justifyContent: "space-around",
+                alignItems: "center",
+                width: "100%",
+              }}
+            >
+              <TouchableOpacity
+                onPress={() => setConfirmModal(false)}
+                style={{
+                  backgroundColor: "#870000",
+                  width: 75,
+                  paddingVertical: 5,
+                  justifyContent: "center",
+                  alignItems: "center",
+                  borderRadius: 10,
+                }}
+              >
+                <Text style={{ color: "white", fontWeight: "bold" }}>No</Text>
+              </TouchableOpacity>
+              <TouchableOpacity
+                onPress={() => BackHandler.exitApp()}
+                style={{
+                  backgroundColor: "#46B950",
+                  width: 75,
+                  paddingVertical: 5,
+                  justifyContent: "center",
+                  alignItems: "center",
+                  borderRadius: 10,
+                }}
+              >
+                <Text style={{ color: "white", fontWeight: "bold" }}>Yes</Text>
+              </TouchableOpacity>
+            </View>
+          </View>
+        </View>
+      </Modal>
       <Header currentUser={currentUser} navigation={navigation} />
 
       <View
